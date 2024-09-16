@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
-const db = require('./frontend/db'); // Adjust the path if needed
+const db = require('./frontend/db'); 
 
-// Middleware to parse JSON bodies
+// middleware to parse JSON bodies
 app.use(express.json());
 
-// Example endpoint to get data from the database
+// placeholder data
 app.get('/data', (req, res) => {
-  db.all('SELECT * FROM your_table_name', [], (err, rows) => {
+  db.all('SELECT * FROM table', [], (err, rows) => {
     if (err) {
       res.status(500).send('Error fetching data.');
       return;
@@ -16,7 +16,7 @@ app.get('/data', (req, res) => {
   });
 });
 
-// Start the server
+// this will start the server 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
