@@ -2,7 +2,8 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 //path to database file
-const dbPath = path.join(__dirname, '"C:\Users\kegar\OneDrive - Ouachita Baptist University\Documents\CapstoneProject\capstone-registration-system-repo\DBeaver\Production\registration-sample-DB-Production"');
+const dbPath = 'C:/Users/kegar/OneDrive - Ouachita Baptist University/Documents/CapstoneProject/capstone-registration-system-repo/DBeaver/Production/registration-sample-DB-Production.db';
+
 
 
 //helps us know if the database will open or not 
