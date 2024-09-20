@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 //path to database file
-const dbPath = 'C:/Users/kegar/OneDrive - Ouachita Baptist University/Documents/CapstoneProject/capstone-registration-system-repo/DBeaver/Production/registration-sample-DB-Production.db';
+const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
 
 
 
