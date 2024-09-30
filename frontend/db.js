@@ -15,9 +15,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-let sql = `SELECT * FROM Persons`;
+let sqlQuery = `SELECT * FROM Persons`;
 
-db.all(sql, [], (err, rows) => {
+db.all(sqlQuery, [], (err, rows) => {
   if (err) {
     throw err;
   }
