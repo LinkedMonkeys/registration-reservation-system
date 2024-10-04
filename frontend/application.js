@@ -3,7 +3,7 @@ const app = express();
 const db = require('./frontend/db'); 
 
 // middleware to parse JSON bodies
-app.use(express.json());
+app.use(express.json('public'));
 
 // placeholder data
 app.get('/data', (req, res) => {

@@ -1,9 +1,10 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const express = require('express');
+const app = express();
 
 //path to database file
 const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
-
 
 
 //helps us know if the database will open or not 
@@ -24,6 +25,16 @@ db.all(sqlQuery, [], (err, rows) => {
   rows.forEach((row) => {
     console.log(row);
   });
+});
+
+// this will start the server 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+app.get('/',(req, res) => {
+  res.send('Running from db.js');
 });
 
 // close the database connection
