@@ -3,6 +3,10 @@ const path = require('path');
 const express = require('express');
 const app = express();
 
+//sets EJS as template engine
+app.set('view engine', 'ejs');
+
+
 //path to database file
 const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
 
@@ -16,14 +20,18 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-let sqlQuery = `SELECT * FROM Persons`;
 
-db.all(sqlQuery, [], (err, rows) => {
-  if (err) {
-    throw err;
-  }
-  rows.forEach((row) => {
-    console.log(row);
+app.get('/', (req, res) => {
+  const sqlQuery = `SELECT * FROM Persons`;
+
+  //gets data from the database 
+  db.all(sqlQuery, [], (err, rows) => {
+    if (err) {
+      return res.status(500).send('Error retrieving data from database');
+    }
+    
+    //give the data to the ejs template "registration_frontend"
+    res.render('registration_frontend', { persons: rows });
   });
 });
 
@@ -33,12 +41,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-app.get('/',(req, res) => {
-  res.send('Running from db.js');
-});
 
-// close the database connection
-db.close();
-
-
-module.exports = db;
+//no point in closing the database if it'll close on its own once we close the application.
