@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Data</title>
+</head>
+<body>
+    <h1>Registration Data</h1>
+    
+<% if (result) { // If the result is non-null. %>
+  <p>
+    You passed the id (in the URL): <%= id %>
+  </p>
+
+  <ul>
+    <li>Person ID: <%= result.Person_ID %></li>
+    <li>Group: <%= result.Group %></li>
+    <li>First Name: <%= result.First_Name %></li>
+    <li>Last Name: <%= result.Last_Name %></li>
+    <li>Email: <%= result.Email %></li>
+  </ul>
+<% } else { %>
+  <p>The id <%= id %> does not exist.</p>
+<% } %>
+
+
+</body>
+</html>
