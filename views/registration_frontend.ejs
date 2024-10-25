@@ -1,19 +1,87 @@
+<!-- FYI: This code does not include or do anything to the current database. Other than use information from it  -->
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration Data</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Data</title>
 </head>
 <body>
-    <h1>Registration Data</h1>
-    
-<!-- 
- This is pulling information from the persons database table.  -->
-    <ul>
-        <% persons.forEach(person => { %>
-            <li><%= person.First_Name %> <%= person.Last_Name %> - <%= person.Email %></li>
-        <% }) %>
-    </ul>
+  <h1>Registration Data</h1>
+
+  <!-- List of persons from the Persons table -->
+  <ul>
+    <% Persons.forEach(person => { %>
+      <li><%= person.First_Name %> <%= person.Last_Name %> - <%= person.Email %></li>
+    <% }) %>
+  </ul>
+
+  <!-- Table of registration slots with dates, times, and a column for the student's name -->
+  <table style="width: 100%; border: 2px solid black; border-spacing: 0;">
+    <thead>
+      <tr>
+        <th style="padding: 10px; text-align: left; border: 2px solid black;">Date Available</th>
+        <th style="padding: 10px; text-align: left; border: 2px solid black;">Time</th>
+        <th style="padding: 10px; text-align: left; border: 2px solid black;">Student</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% RegistrationList.forEach(rlist => { %>   
+        <tr>
+          <td style="padding: 10px; text-align: left; border: 2px solid black;"><%= rlist.Date_Available %></td>
+          <td style="padding: 10px; text-align: left; border: 2px solid black;">
+            <a href="#" onclick="showStudentPopup('<%= rlist.id %>')"><%= rlist.Time %></a>
+          </td>
+          <td style="padding: 10px; text-align: left; border: 2px solid black;" id="student-<%= rlist.id %>">
+            <%= rlist.Student_First_Name ? `${rlist.Student_First_Name} ${rlist.Student_Last_Name}` : "" %>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <!-- creates the pop up box where student can put their name  -->
+  <div id="studentPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); padding:20px; border:2px solid black; background-color:#fff;">
+    <h2>Enter Student Name</h2>
+    <form id="studentForm">
+      <input type="hidden" id="slotId">
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" required>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" required>
+      <button type="button" onclick="submitStudentInfo()">Submit</button>
+      <button type="button" onclick="closePopup()">Cancel</button>
+    </form>
+  </div>
+
+ 
+  <script>
+    function showStudentPopup(slotId) {
+      document.getElementById("slotId").value = slotId;
+      document.getElementById("studentPopup").style.display = "block";
+    }
+
+    function closePopup() {
+      document.getElementById("studentPopup").style.display = "none";
+    }
+
+    function submitStudentInfo() {
+      const slotId = document.getElementById("slotId").value;
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+
+      //will update the student name in the table directly
+      document.getElementById(`student-${slotId}`).innerText = `${firstName} ${lastName}`;
+      closePopup();
+    }
+  </script>
 </body>
 </html>
+

@@ -22,18 +22,32 @@ const db = new sqlite3.Database(dbPath, (err) => {
 
 
 app.get('/', (req, res) => {
-  const sqlQuery = `SELECT * FROM Persons`;
 
-  //gets data from the database 
-  db.all(sqlQuery, [], (err, rows) => {
+  //will query the Persons table
+  const personsQuery = `SELECT * FROM Persons`;
+  db.all(personsQuery, [], (err, personsRows) => {
     if (err) {
-      return res.status(500).send('Error retrieving data from database');
+      return res.status(500).send('Error retrieving data from Persons table');
     }
-    
-    //give the data to the ejs template "registration_frontend"
-    res.render('registration_frontend', { persons: rows });
+
+    // will query the RegistrationList table after the Persons query
+    const registrationListQuery = `SELECT * FROM RegistrationList`;
+    db.all(registrationListQuery, [], (err, registrationListRows) => {
+      if (err) {
+        return res.status(500).send('Error retrieving data from RegistrationList table');
+      }
+
+      //will render both Persons and RegistrationList information
+      res.render('registration_frontend', { 
+        Persons: personsRows, 
+        RegistrationList: registrationListRows 
+      });
+    });
   });
 });
+
+
+// ALTER TABLE Query?
 
 // this will start the server 
 const PORT = process.env.PORT || 3000;
