@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Data</title>
+</head>
+<body>
+
+<h1>Registration sign-up</h1>
+<p>Welcome, <%= result.First_Name %> <%= result.Last_Name %>.</p>
+
+<% if (time_requested) { %>
+    <p>You requested <%= date_requested %> <%= time_requested %>.</p>
+<% } %>
+
+<ul>
+<% for (var i=0; i<time_entries.length; i++) { %>
+    <li class=<% if (time_entries[i]["Student_ID"] == 0) { %>
+            "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
+                <%= time_entries[i]["Date_Available"] %>
+                <%= time_entries[i]["Time"] %>
+            </a> %>
+        <% } else { %>
+            "unavailable">
+                <%= time_entries[i]["Date_Available"] %>
+                <%= time_entries[i]["Time"] %>
+        <% } %>
+        
+    </li>
+<% } %>
+</ul>
+
+</body>
+</html>

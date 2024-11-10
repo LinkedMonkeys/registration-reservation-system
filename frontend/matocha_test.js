@@ -35,6 +35,42 @@ app.get('/', (req, res) => {
   });
 });
 
+
+// Route used by students to request a registration time
+// In this route, the question marks mean that date and time are optional.
+app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
+  const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.key}"`
+  console.log(sqlQuery);
+  db.all(sqlQuery, [], (err, rows) => {
+    if (err) {
+      return res.status(500).send('1Error retrieving data from database');
+    }
+  
+    // Determine the student's Advisor's ID.
+    if (rows[0]) {
+      advisor_id = rows[0]["Advisor"];
+      console.log(rows[0]["Advisor"]);
+
+      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id}`
+      console.log(sqlQuery);
+      db.all(sqlQuery, [], (err, time_entries) => {
+        if (err) {
+          return res.status(500).send('2Error retrieving data from database');
+        }
+        console.log(time_entries);
+      
+        // This asks it to render views/request_time.ejs.  It is passing the hash
+        // as parameters to this script.
+        res.render('request_time', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested, result: rows[0], time_entries: time_entries}, );
+      });
+    } else {
+      res.render('invalid_key', {key: req.params.key});
+    }
+  });
+});
+
+
+// Old route for testing.
 app.get('/testing_ids/:id', (req, res) => {
   const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.id}"`
   db.all(sqlQuery, [], (err, rows) => {
@@ -51,11 +87,11 @@ app.get('/testing_ids/:id', (req, res) => {
   });
 });
 
+
 // this will start the server 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
 
 //no point in closing the database if it'll close on its own once we close the application.
