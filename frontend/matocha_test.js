@@ -48,10 +48,10 @@ app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
   
     // Determine the student's Advisor's ID.
     if (rows[0]) {
-      advisor_id = rows[0]["Advisor"];
+      var advisor_id = rows[0]["Advisor"];
       console.log(rows[0]["Advisor"]);
-
-      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id}`
+      var studentGroup = rows[0]["Group"]
+      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}"`
       console.log(sqlQuery);
       db.all(sqlQuery, [], (err, time_entries) => {
         if (err) {

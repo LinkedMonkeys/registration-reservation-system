@@ -15,19 +15,13 @@
 <% } %>
 
 <ul>
-<% for (var i=0; i<time_entries.length; i++) { %>
-    <li class=<% if (time_entries[i]["Student_ID"] == 0) { %>
-            "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
-                <%= time_entries[i]["Date_Available"] %>
-                <%= time_entries[i]["Time"] %>
-            </a> %>
-        <% } else { %>
-            "unavailable">
-                <%= time_entries[i]["Date_Available"] %>
-                <%= time_entries[i]["Time"] %>
+<% for (var i=0; i<time_entries.length; i++) { 
+    var availableDateAndTime = time_entries[i]["Date_Available"]+" | "+time_entries[i]["Time"]; %>
+     <% if (time_entries[i]["Student_ID"] == 0) { %>
+        <li class = "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
+                <%= availableDateAndTime %> </a> </li>
         <% } %>
         
-    </li>
 <% } %>
 </ul>
 
