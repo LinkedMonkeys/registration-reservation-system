@@ -7,23 +7,26 @@
 </head>
 <body>
 
-
-
-
-
-    
 <h1>Registration sign-up</h1>
 <p>Welcome, <%= result.First_Name %> <%= result.Last_Name %>.</p>
 
+<!-- Displays the "You requested [Date][Time]" message after a time has been clicked -->
 <% if (time_requested) { %>
     <p>You requested <%= date_requested %> <%= time_requested %>.</p>
 <% } %>
+
+<!-- When the user clicks on an available timeslot, send a SQL Query to the database
+that will update the user's requested time by creating a new row in RegistrationList,
+and by removing an existing requested time, if any from the RegistrationList. -->
+<% 
+
+%>
 
 <ul>
 <% for (var i=0; i<time_entries.length; i++) { 
     var availableDateAndTime = time_entries[i]["Date_Available"]+" | "+time_entries[i]["Time"]; %>
      <% if (time_entries[i]["Student_ID"] == 0) { %>
-        <li class = "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
+        <li class = "available"><a href="/request_time_thomas/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
                 <%= availableDateAndTime %> </a> </li>
         <% } %>
         
