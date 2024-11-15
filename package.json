@@ -2,6 +2,7 @@
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^4.21.0",
+    "fullcalendar": "^6.1.15",
     "nodemon": "^3.1.7",
     "sqlite3": "^5.1.7"
   }

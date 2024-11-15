@@ -2,6 +2,11 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const express = require('express');
 const app = express();
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid'; 
+import interactionPlugin from '@fullcalendar/interaction'; 
+
+
 
 //sets EJS as template engine
 app.set('view engine', 'ejs');
@@ -56,4 +61,3 @@ app.listen(PORT, () => {
 });
 
 
-//no point in closing the database if it'll close on its own once we close the application.
