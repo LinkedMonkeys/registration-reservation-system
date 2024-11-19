@@ -3,11 +3,11 @@ drop table RegistrationList;
 
 create table Persons
     (Person_ID  integer,
-    Group       text NOT NULL,
+    "Group"       text NOT NULL,
     Last_Name   text NOT NULL,
     First_Name  text NOT NULL,
     Email       text NOT NULL,
-    Key/URL_Specific    text NOT NULL,
+    "Key/URL_Specific"    text NOT NULL,
     Advisor     integer,
     primary key (Person_ID),
     foreign key (Advisor) references RegistrationList (Person_ID)
@@ -18,7 +18,7 @@ create table RegistrationList
     Date_Available  text NOT NULL,
     Time            text NOT NULL,
     Student_ID      integer,
-    Group           text NOT NULL,
+    "Group"           text NOT NULL,
     primary key (Professor_ID, Date_Available, Time),
     foreign key (Professor_ID) references Persons(Person_ID),
     foreign key (Student_ID) references Persons(Person_ID)
@@ -61,7 +61,14 @@ insert into RegistrationList values (1, '2024-11-06', '0830', 9, 'Sophomore');
 
 insert into RegistrationList values (10, '2024-11-04', '1300', 8, 'Freshman');
 
--- An available Senior spot.
+-- Senior slots.
 insert into RegistrationList values (1, '2024-11-04', '0830', 0, 'Senior');
 
+insert into RegistrationList values (1, '2024-11-05', '0800', 0, 'Senior');
+
 insert into RegistrationList values (1, '2024-11-04', '0900', 0, 'Senior');
+
+-- Junior slots
+insert into RegistrationList values (1, '2024-11-06', '0830', 0, 'Junior');
+
+insert into RegistrationList values (1, '2024-11-06', '0800', 0, 'Junior');
