@@ -1,3 +1,42 @@
+<% 
+// Assuming that date is a string in the YYYY-MM-DD format.
+// function formatDate(date) {
+//     var [year, month, day] = date.split('-');
+//     var monthNames = ["January", "February", "March", "April", "May", "June",
+//         "July", "August", "September", "October", "November", "December"];
+    
+//     // Feel free to change the order of these.
+//     return monthNames[parseInt(month)] + ' ' + parseInt(day) + ', ' + parseInt(year);
+// }
+
+function formatDate(date) {
+    var [year, month, day] = date.split('-');
+    dateObject = new Date(parseInt(year), parseInt(month)-1, parseInt(day));
+
+    return dateObject.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"long", day:"numeric"});
+}
+
+// Assuming that time is a string in military time ('0000' through '2359')
+function formatTime(time) {
+    var hourString = time.substring(0, 2);
+    var hour = parseInt(hourString);
+    var minuteString = time.substring(2, 4);
+    var amOrPm;
+
+    if (hour == 0) {
+        hour = 12;
+        amOrPm = 'am';
+    } else if (hour > 12) {
+        hour -= 12;
+        amOrPm = 'pm';
+    } else {
+        amOrPm = 'am';
+    }
+
+    return hour + ':' + minuteString + ' ' + amOrPm;
+}
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,12 +55,12 @@
 <p>Welcome, <%= result.First_Name %> <%= result.Last_Name %>.</p>
 
 <% if (time_requested) { %>
-    <p>You requested <%= date_requested %> <%= time_requested %>.</p>
+    <p>You requested <%= formatDate(date_requested) %> @ <%= formatTime(time_requested) %>.</p>
 <% } %>
 
 <ul>
 <% for (var i=0; i<time_entries.length; i++) { 
-    var availableDateAndTime = time_entries[i]["Date_Available"]+" | "+time_entries[i]["Time"]; %>
+    var availableDateAndTime = formatDate(time_entries[i]["Date_Available"])+" @ "+ formatTime(time_entries[i]["Time"]); %>
      <% if (time_entries[i]["Student_ID"] == 0) { %>
         <li class = "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
                 <%= availableDateAndTime %> </a> </li>

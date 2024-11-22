@@ -51,7 +51,7 @@ app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
       var advisor_id = rows[0]["Advisor"];
       console.log(rows[0]["Advisor"]);
       var studentGroup = rows[0]["Group"]
-      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}"`
+      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}" ORDER BY Date_Available, Time`
       console.log(sqlQuery);
       db.all(sqlQuery, [], (err, time_entries) => {
         if (err) {
