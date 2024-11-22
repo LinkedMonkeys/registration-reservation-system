@@ -87,6 +87,17 @@ app.get('/testing_ids/:id', (req, res) => {
   });
 });
 
+app.get('/advisor/:key:/', (req,res) => {
+  db.all(sqlQuery, [], (err, rows) => {
+    if (err) {
+      return res.status(500).send('Error retrieving data from database');
+    }
+    else {
+      return null
+    }
+  });
+});
+
 
 // this will start the server 
 const PORT = process.env.PORT || 3000;
