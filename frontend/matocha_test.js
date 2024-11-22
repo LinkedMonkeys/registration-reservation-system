@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const express = require('express');
+const { timeEnd } = require('console');
 const app = express();
 
 //sets EJS as template engine
@@ -51,7 +52,7 @@ app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
       var advisor_id = rows[0]["Advisor"];
       console.log(rows[0]["Advisor"]);
       var studentGroup = rows[0]["Group"]
-      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}" ORDER BY Date_Available, Time`
+      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}"`
       console.log(sqlQuery);
       db.all(sqlQuery, [], (err, time_entries) => {
         if (err) {
@@ -87,16 +88,36 @@ app.get('/testing_ids/:id', (req, res) => {
   });
 });
 
-app.get('/advisor/:key:/', (req,res) => {
-  db.all(sqlQuery, [], (err, rows) => {
-    if (err) {
-      return res.status(500).send('Error retrieving data from database');
-    }
-    else {
-      return null
-    }
+//  Route for advisors' page
+app.get('/listTimes/', (req,res) => {
+  // app.get('/listTimes/:key/:date/:availability?', (req,res) => {
+  // const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.key}"`
+  // db.all(sqlQuery, [], (err, rows) => {
+  //   if (err) {
+  //     return res.status(500).send('1Error retrieving data from database');
+  //   }
+  //   else {
+      var a = []
+      // if (rows[0]) {
+        for (var i = 7; i<18; i++){
+          if (i < 10){
+          a.push("0" + i + "00")
+          a.push("0" + i + "30")
+        }
+        else {
+          a.push(i + "00")
+          a.push(i + "30")
+        }
+      }
+      res.render('advisor', {key: req.params.key, date: req.params.date, time_entries: a});
+    // }
+    //   else {
+    //     res.render('invalid_key', {key: req.params.key, date: req.params.date, availability: a});
+    //   }
+    // }
   });
-});
+// });
+
 
 
 // this will start the server 
