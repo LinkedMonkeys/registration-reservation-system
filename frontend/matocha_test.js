@@ -1,6 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const express = require('express');
+const { timeEnd } = require('console');
 const app = express();
 
 //sets EJS as template engine
@@ -39,30 +40,27 @@ app.get('/', (req, res) => {
 // Route used by students to request a registration time
 // In this route, the question marks mean that date and time are optional.
 app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
-  const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.key}"`
+  const sqlQuery =
+  `SELECT *
+  FROM RegistrationList rl
+  JOIN (SELECT *
+    FROM Persons
+    WHERE "Key/URL_Specific" = "${req.params.key}") as p
+  ON rl.Professor_ID = p.Advisor AND rl."Group" = p."Group" AND rl.Student_ID = 0
+  ORDER BY Date_Available, Time`
   console.log(sqlQuery);
-  db.all(sqlQuery, [], (err, rows) => {
+  
+  db.all(sqlQuery, [], (err, time_entries) => {
     if (err) {
-      return res.status(500).send('1Error retrieving data from database');
+      return res.status(500).send('Error retrieving data from database');
     }
   
-    // Determine the student's Advisor's ID.
-    if (rows[0]) {
-      var advisor_id = rows[0]["Advisor"];
-      console.log(rows[0]["Advisor"]);
-      var studentGroup = rows[0]["Group"]
-      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}" ORDER BY Date_Available, Time`
-      console.log(sqlQuery);
-      db.all(sqlQuery, [], (err, time_entries) => {
-        if (err) {
-          return res.status(500).send('2Error retrieving data from database');
-        }
+    if (time_entries) { // If the query was successful...
         console.log(time_entries);
       
         // This asks it to render views/request_time.ejs.  It is passing the hash
         // as parameters to this script.
-        res.render('request_time', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested, result: rows[0], time_entries: time_entries}, );
-      });
+        res.render('request_time', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested, time_entries: time_entries}, );
     } else {
       res.render('invalid_key', {key: req.params.key});
     }
@@ -86,6 +84,37 @@ app.get('/testing_ids/:id', (req, res) => {
   res.render('idtest', { id: req.params.id, result: rows[0]});
   });
 });
+
+//  Route for advisors' page
+app.get('/listTimes/', (req,res) => {
+  // app.get('/listTimes/:key/:date/:availability?', (req,res) => {
+  // const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.key}"`
+  // db.all(sqlQuery, [], (err, rows) => {
+  //   if (err) {
+  //     return res.status(500).send('1Error retrieving data from database');
+  //   }
+  //   else {
+      var a = []
+      // if (rows[0]) {
+        for (var i = 7; i<18; i++){
+          if (i < 10){
+          a.push("0" + i + "00")
+          a.push("0" + i + "30")
+        }
+        else {
+          a.push(i + "00")
+          a.push(i + "30")
+        }
+      }
+      res.render('advisor', {key: req.params.key, date: req.params.date, time_entries: a});
+    // }
+    //   else {
+    //     res.render('invalid_key', {key: req.params.key, date: req.params.date, availability: a});
+    //   }
+    // }
+  });
+// });
+
 
 
 // this will start the server 

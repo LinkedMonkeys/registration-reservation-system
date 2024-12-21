@@ -7,31 +7,21 @@
 </head>
 <body>
 
-<h1>Registration sign-up</h1>
-<p>Welcome, <%= result.First_Name %> <%= result.Last_Name %>.</p>
-
 <p>Set available time slots for students here.</p>
 
-<% if (availability_set) { %>
-    <p>You requested <%= date_requested %> <%= time_requested %>.</p>
-<% } %>
 
 
-// Should display all time slots with check boxes displaying which ones are and aren't available.
-// Availability could be determined by URL with a sequence of 0s and 1s?
-<ul>
-    <% for (var i=0; i<time_entries.length; i++) { 
-        var availableDateAndTime = time_entries[i]["Date_Available"]+" | "+time_entries[i]["Time"]; %>
-         <% if (time_entries[i]["Student_ID"] == 0) { %>
-            <li class = "available"><a href="/set_availability/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
-                    <%= availableDateAndTime %> </a> </li>
-            <% } %>
-         <% else { %>
-         <li class = "unavailable"><a href="/set_availability/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
-            <%= availableDateAndTime %> </a> </li>
-        <% } >%
+
+<!-- // Should display all time slots with check boxes displaying which ones are and aren't available.
+// Availability could be determined by URL with a sequence of 0s and 1s? -->
+<ol>
+    <% for (var i=0; i<time_entries.length; i++) { %>
+        <li>
+            <%= time_entries[i] %>
+        </li>
     <% } %>
-    </ul>
+
+    </ol>
     
     </body>
     </html>

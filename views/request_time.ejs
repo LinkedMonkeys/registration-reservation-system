@@ -45,14 +45,9 @@ function formatTime(time) {
     <title>Registration Data</title>
 </head>
 <body>
-
-
-
-
-
     
 <h1>Registration sign-up</h1>
-<p>Welcome, <%= result.First_Name %> <%= result.Last_Name %>.</p>
+<p>Welcome, <%= time_entries[0].First_Name %> <%= time_entries[0].Last_Name %>.</p>
 
 <% if (time_requested) { %>
     <p>You requested <%= formatDate(date_requested) %> @ <%= formatTime(time_requested) %>.</p>
@@ -61,11 +56,8 @@ function formatTime(time) {
 <ul>
 <% for (var i=0; i<time_entries.length; i++) { 
     var availableDateAndTime = formatDate(time_entries[i]["Date_Available"])+" @ "+ formatTime(time_entries[i]["Time"]); %>
-     <% if (time_entries[i]["Student_ID"] == 0) { %>
-        <li class = "available"><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
-                <%= availableDateAndTime %> </a> </li>
-        <% } %>
-        
+        <li><a href="/request_time/<%= key %>/<%= time_entries[i]["Date_Available"] %>/<%= time_entries[i]["Time"] %>">
+                <%= availableDateAndTime %> </a> </li>        
 <% } %>
 </ul>
 
