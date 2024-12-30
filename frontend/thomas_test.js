@@ -40,33 +40,48 @@ app.get('/', (req, res) => {
 // In this route, the question marks mean that date and time are optional.
 app.get('/request_time_thomas/:key/:date_requested?/:time_requested?', (req, res) => {
   const sqlQuery = `SELECT * FROM Persons WHERE "KEY/URL_Specific"="${req.params.key}"`
-  console.log(sqlQuery);
-  db.all(sqlQuery, [], (err, rows) => {
-    if (err) {
-      return res.status(500).send('1Error retrieving data from database');
-    }
+  const sqlUpdateQuery = `UPDATE RegistrationList ` + 
+  `SET Student_ID = (SELECT Person_ID FROM Persons WHERE "Key/URL_Specific" = "Unique_Key_5") ` + 
+  `WHERE Date_Available = ${req.params.date_requested} AND Time = ${req.params.time_requested} AND Student_ID = "0" AND ` +  
+  `Professor_ID = (SELECT Advisor FROM Persons WHERE "Key/URL_Specific" = ${req.params.key})`;
+  console.log(sqlUpdateQuery);
+  if (date && time){
+    db.all(sqlUpdateQuery, [], (err, results) => {
+      if (err) {
+        return res.status(500).send('1Error retrieving data from database');
+      }
+      console.log(`affected rows: ${results.affectedRows}`);
+    });
+  } else {
+      db.all(sqlQuery, [], (err, rows) => {
+        if (err) {
+          return res.status(500).send('1Error retrieving data from database');
+        }
+        console.log(rows);
+      });
+  }
   
     // Determine the student's Advisor's ID.
-    if (rows[0]) {
-      var advisor_id = rows[0]["Advisor"];
-      console.log(rows[0]["Advisor"]);
-      var studentGroup = rows[0]["Group"]
-      const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}"`
-      console.log(sqlQuery);
-      db.all(sqlQuery, [], (err, time_entries) => {
-        if (err) {
-          return res.status(500).send('2Error retrieving data from database');
-        }
-        console.log(time_entries);
+  //   if (rows[0]) {
+  //     var advisor_id = rows[0]["Advisor"];
+  //     console.log(rows[0]["Advisor"]);
+  //     var studentGroup = rows[0]["Group"]
+  //     const sqlQuery = `SELECT * FROM RegistrationList WHERE Professor_ID=${advisor_id} And "Group" = "${studentGroup}"`
+  //     console.log(sqlQuery);
+  //     db.all(sqlQuery, [], (err, time_entries) => {
+  //       if (err) {
+  //         return res.status(500).send('2Error retrieving data from database');
+  //       }
+  //       console.log(time_entries);
       
-        // This asks it to render views/request_time_thomas.ejs.  It is passing the hash
-        // as parameters to this script.
-        res.render('request_time_thomas', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested, result: rows[0], time_entries: time_entries}, );
-      });
-    } else {
-      res.render('invalid_key', {key: req.params.key});
-    }
-  });
+  //       // This asks it to render views/request_time_thomas.ejs.  It is passing the hash
+  //       // as parameters to this script.
+  //       res.render('request_time_thomas', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested, result: rows[0], time_entries: time_entries}, );
+  //     });
+  //   } else {
+  //     res.render('invalid_key', {key: req.params.key});
+  //   }
+  res.render('request_time_thomas', {key: req.params.key});
 });
 
 
