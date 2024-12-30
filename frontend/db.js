@@ -2,9 +2,6 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const express = require('express');
 const app = express();
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid'; 
-import interactionPlugin from '@fullcalendar/interaction'; 
 
 
 
