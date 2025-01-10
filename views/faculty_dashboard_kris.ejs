@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Dashboard</title>
+</head>
+<body>
+
+<h1>Faculty Dashboard</h1>
+
+<!-- Display a list of students and their registration times -->
+<h2>Student Registrations</h2>
+<% if (RegistrationList && RegistrationList.length > 0) { %>
+<table border="1">
+<thead>
+<tr>
+<th>First Name</th>
+<th>Last Name</th>
+<th>Date</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<% RegistrationList.forEach(registration => { %>
+<tr>
+<td><%= registration.First_Name %></td>
+<td><%= registration.Last_Name %></td>
+<td><%= registration.Date_Available %></td>
+<td><%= registration.Time %></td>
+<td>
+<!-- Option to unregister a student -->
+<form action="/unregister" method="POST">
+<input type="hidden" name="student_id" value="<%= registration.Person_ID %>">
+<input type="hidden" name="current_date" value="<%= registration.Date_Available %>">
+<input type="hidden" name="current_time" value="<%= registration.Time %>">
+<button type="submit">Unregister</button>
+</form>
+</td>
+</tr>
+<% }); %>
+</tbody>
+</table>
+<% } else { %>
+<p>No student registrations found.</p>
+<% } %>
+
+<!-- Button to reset all times for a new semester -->
+<h2>Reset All Registration Times for the New Semester</h2>
+<form action="/reset-semester" method="POST">
+<button type="submit">Reset Semester</button>
+</form>
+
+<h2>Manage Available Time Slots</h2>
+<p>Here, you can add, edit, or delete available time slots for your students.</p>
+
+<!-- Form to add a new available time slot -->
+<h3>Add New Time Slot</h3>
+<form action="/add-time-slot" method="POST">
+<label for="date">Date:</label>
+<input type="date" name="date" required>
+<label for="time">Time (HHMM):</label>
+<input type="text" name="time" required>
+<button type="submit">Add Time Slot</button>
+</form>
+
+<!-- List of current available time slots -->
+<h3>Current Available Time Slots</h3>
+<% if (availableSlots && availableSlots.length > 0) { %>
+<table border="1">
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<% availableSlots.forEach(slot => { %>
+<tr>
+<td><%= slot.Date_Available %></td>
+<td><%= slot.Time %></td>
+<td>
+<!-- Option to delete a time slot -->
+<form action="/delete-time-slot" method="POST">
+<input type="hidden" name="date" value="<%= slot.Date_Available %>">
+<input type="hidden" name="time" value="<%= slot.Time %>">
+<button type="submit">Delete Time Slot</button>
+</form>
+</td>
+</tr>
+<% }); %>
+</tbody>
+</table>
+<% } else { %>
+<p>No available time slots found.</p>
+<% } %>
+
+</body>
+</html>

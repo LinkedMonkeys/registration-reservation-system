@@ -1,0 +1,20 @@
+/* Struggling to get this to work. Not sure why it wont connect to the EJS file  */
+
+
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+
+body {
+    font-family: 'Arial', sans-serif;  
+    line-height: 1.6;
+    color: #333; 
+    background-color: #f4f4f4;  
+    padding: 20px;
+}

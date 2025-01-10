@@ -33,10 +33,6 @@ function formatTime(time) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration Dashboard</title>
-
-
-    <!-- NOT WORKING -->
-    <link rel="stylesheet" href="/public/css/style.css">
 </head>
 <body>
 
@@ -44,14 +40,22 @@ function formatTime(time) {
 
 <!-- Display Student Information -->
 <p>Welcome, <%= Persons?.First_Name || 'Guest' %> <%= Persons?.Last_Name || '' %>.</p>
-<p>Your Classification: <%= Persons?.Classification || 'Not available' %></p>
-<p>Your Advisor: <%= Persons?.Advisor_Name || 'Not assigned' %></p>
+<p>Your Classification: <%= Persons?.Group || 'Not available' %></p>
+<p>Your Advisor: <%= Persons?.Advisor || 'Not assigned' %></p>
+<p>Your Email: <%= Persons?.Email || 'Not assigned' %></p>
 
-<!-- Show previously requested time slot -->
-<% if (date_requested && time_requested) { %>
-    <p>You requested <%= formatDate(date_requested) %> @ <%= formatTime(time_requested) %>.</p>
+<!-- If the student is already registered, show the current registration and provide an option to unregister -->
+<% if (RegistrationList && RegistrationList.length > 0) { %>
+    <p>You are currently registered for <%= formatDate(RegistrationList[0].Date_Available) %> @ <%= formatTime(RegistrationList[0].Time) %>.</p>
+    <form action="/unregister" method="POST">
+        <input type="hidden" name="student_id" value="<%= student_id %>">
+        <input type="hidden" name="current_date" value="<%= RegistrationList[0].Date_Available %>">
+        <input type="hidden" name="current_time" value="<%= RegistrationList[0].Time %>">
+        <button type="submit">Unregister</button>
+    </form>
+    <p>You can select a new time slot below.</p>
 <% } else { %>
-    <p>Please select a time slot below to register.</p>
+    <p>You have not registered yet. Please select a time slot below.</p>
 <% } %>
 
 <!-- List of available registration slots -->
@@ -59,11 +63,11 @@ function formatTime(time) {
 <ul>
 <% time_entries.forEach(entry => { %>
     <li>
-        <!-- Form to register for a selected time slot -->
-        <form action="/request_time_kris/<%= key %>/<%= entry.Date_Available %>/<%= entry.Time %>" method="POST">
+        <form action="/register" method="POST">
             <p><%= formatDate(entry.Date_Available) %> @ <%= formatTime(entry.Time) %></p>
-            <input type="hidden" name="date_requested" value="<%= entry.Date_Available %>">
-            <input type="hidden" name="time_requested" value="<%= entry.Time %>">
+            <input type="hidden" name="student_id" value="<%= student_id %>">
+            <input type="hidden" name="new_date" value="<%= entry.Date_Available %>">
+            <input type="hidden" name="new_time" value="<%= entry.Time %>">
             <button type="submit">Register</button>
         </form>
     </li>
@@ -72,5 +76,4 @@ function formatTime(time) {
 
 </body>
 </html>
-
 
