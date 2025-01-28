@@ -1,0 +1,11 @@
+--This query deletes ALL rows within Registration_List where Professor_ID = 1
+DELETE FROM RegistrationList WHERE Professor_ID = 1;
+
+--This query adds an entry to Registration_List with the given arguments
+INSERT INTO RegistrationList (Professor_ID, Date_Available, Time, Student_ID, 'Group')
+VALUES (INTEGER, 'TEXT: A Date', 'TEXT: A time', INTEGER, 'TEXT: Group')
+
+--This query changes the Student_ID value where the date and time have been selected
+--Student_ID equals -1 if the date/time should not be available, 0 if it should be available,
+--or any valid Student_ID if it has been selected by a user
+UPDATE RegistrationList SET Student_ID = -1 WHERE Date_Available = '???' AND Time = '???'
