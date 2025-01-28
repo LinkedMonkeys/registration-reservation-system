@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
     }
     
     //give the data to the ejs template "registration_frontend"
-    res.render('registration_frontend', { persons: rows });
+    res.render('registration_frontend', { persons: rows , regi});
   });
 });
 
@@ -81,7 +81,7 @@ app.get('/request_time_thomas/:key/:date_requested?/:time_requested?', (req, res
   //   } else {
   //     res.render('invalid_key', {key: req.params.key});
   //   }
-  res.render('request_time_thomas', {key: req.params.key});
+  res.render('request_time_thomas', {key: req.params.key, date_requested: req.params.date_requested, time_requested: req.params.time_requested});
 });
 
 
