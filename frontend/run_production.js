@@ -22,7 +22,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-//Route to faculty dashboard, requires a unique key
+//Route to faculty dashboard, requires a unique key //NEEDS VALIDATION FOR CREDENTIALS
 app.get('/faculty_main/:fac_id', (req,res) => {
 const sqlQuery = 
 `SELECT First_Name, Last_Name

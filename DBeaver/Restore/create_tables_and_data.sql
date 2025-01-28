@@ -8,7 +8,8 @@ create table Persons
     First_Name  text NOT NULL,
     Email       text NOT NULL,
     "Key/URL_Specific"    text NOT NULL,
-    Advisor     integer,
+    Advisor     integer NOT NULL,
+    IsFaculty text NOT NULL,
     primary key (Person_ID),
     foreign key (Advisor) references RegistrationList (Person_ID)
     );
