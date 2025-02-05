@@ -20,7 +20,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-//Route for ?? page 
+//Route for main page. Change Professor_id to Unique Key
 app.get('/faculty/:professor_id', (req, res) => {
   const studentListQuery = `SELECT * FROM Persons WHERE Advisor IS "${req.params.professor_id}"`;
   const userNameQuery = `SELECT * FROM Persons Where Person_ID IS "${req.params.professor_id}"`;
@@ -59,9 +59,71 @@ app.get('/faculty/edit_student/:student_id', (req, res) => {
   });
 });
 
+//Updates student information
+app.post('/update-student', (req, res) => {
+  const { student_id, first_name, last_name, group, email, fac_id } = req.body;
+
+  if (first_name != "") {
+    changeFirstNameQuery = `
+    UPDATE Persons
+    SET First_Name = "${first_name}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeFirstNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+    });
+  }
+  if (last_name != "") {
+    changeLastNameQuery = `
+    UPDATE Persons
+    SET Last_Name = "${last_name}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeLastNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+    });
+  }
+  if (group != "") {
+    changeGroupQuery = `
+    UPDATE Persons
+    SET "Group" = "${group}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeGroupQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing classification:', err.message);
+        return res.status(500).send('Error changing classification');
+      }
+    });
+  }
+  if (email != "") {
+    changeEmailQuery = `
+    UPDATE Persons
+    SET Email = "${email}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeEmailQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing email:', err.message);
+        return res.status(500).send('Error changing email');
+      }
+
+
+    });
+  }
+  res.redirect('/faculty/' + fac_id);
+});
+
+
 //Changes first or last name
 app.post('/change-name', (req, res) => {
-  const { student_id, professor_id, first_name, last_name } = req.body;
+  const { student_id, fac_id, first_name, last_name, } = req.body;
 
   if (first_name == undefined) {
     changeNameQuery = `
@@ -92,6 +154,8 @@ app.post('/change-name', (req, res) => {
       res.redirect('/faculty/edit_student/' + student_id);
     });
   }
+
+
 });
 
 //Set a students classification/Group
