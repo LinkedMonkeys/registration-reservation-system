@@ -188,6 +188,25 @@ app.post('/register', (req, res) => {
   });
 });
 
+function wipe_database(ID_no){
+  db.query(`DELETE FROM Registration_List WHERE Professor_ID == ${ID_no}`, (err,rows)); {
+      if (err) {
+        return res.status(500).send('Error retrieving data from database');
+      }
+      console.log("Successfully deleted all entries under user " + ID_no);
+      console.log(rows)
+  }
+}
+function add_entry(prof_ID, date, time, student_ID, classification){
+db.query(`INSERT INTO RegistrationList ${(Professor_ID, Date_Available, Time, Student_ID, classification)}`, (err,rows)); {
+  if (err) {
+    return res.status(500).send('Error retrieving data from database');
+  }
+  console.log("Successfully added a new time slot to the table");
+  console.log(rows);
+}
+}
+
 // Start the server on port 3000
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
