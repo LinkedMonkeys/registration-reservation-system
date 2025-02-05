@@ -9,45 +9,35 @@
 
 <body>
     <h1>Editing <%= Student[0].First_Name+" "+Student[0].Last_Name%>.</h1>
-
-    <table border=" 1">
-            <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Classification</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        Current first name: <%= Student[0].First_Name %>
-                            <form action="/change-name" method="POST">
-                                <input type="hidden" name="student_id" value="<%= Student[0].Person_ID %>">
-                                <input type="hidden" name="professor_id" value="<%= Student[0].Advisor %>">
+    <form action="/update-student" method="POST">
+            <input type="hidden" name="student_id" value="<%= Student[0].Person_ID %>">
+            <input type="hidden" name="fac_id" value="<%= Student[0].Advisor %>">
+            <table border=" 1">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Classification</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Current first name: <%= Student[0].First_Name %><br>
                                 <label for="first_name">New name:</label>
-                                <input type="text" name="first_name" size="10" required>
-                                <input type="submit" value="Change">
-                            </form>
-                    </td>
-                    <td>
-                        Current last name: <%= Student[0].Last_Name %>
-                            <form action="/change-name" method="POST">
-                                <input type="hidden" name="student_id" value="<%= Student[0].Person_ID %>">
-                                <input type="hidden" name="professor_id" value="<%= Student[0].Advisor %>">
+                                <input type="text" name="first_name" size="10">
+                        </td>
+                        <td>
+                            Current last name: <%= Student[0].Last_Name %><br>
                                 <label for="last_name">New name:</label>
-                                <input type="text" name="last_name" size="10" required>
-                                <input type="submit" value="Change">
-                            </form>
-                    </td>
-                    <td>
-                        Current classification: <%= Student[0].Group %>
-                            <form action="/change-group" method="POST">
-                                <input type="hidden" name="student_id" value="<%= Student[0].Person_ID %>">
-                                <input type="hidden" name="professor_id" value="<%= Student[0].Advisor %>">
-                                <label for="group">Classification:</label>
+                                <input type="text" name="last_name" size="10">
+
+                        </td>
+                        <td>
+                            Current classification: <%= Student[0].Group %><br>
+                                <label for="group">New classification:</label>
                                 <select id="group" name="group">
                                     <option value="" style="display:none"></option>
                                     <option value="Freshman">Freshman</option>
@@ -55,25 +45,17 @@
                                     <option value="Junior">Junior</option>
                                     <option value="Senior">Senior</option>
                                 </select>
-                                <input type="submit" value="Change">
-                            </form>
-                    </td>
-                    <td>
-                        Current email: <%= Student[0].Email %>
-                            <form action="/change-email" method="POST">
-                                <input type="hidden" name="student_id" value="<%= Student[0].Person_ID %>">
-                                <input type="hidden" name="professor_id" value="<%= Student[0].Advisor %>">
+                        </td>
+                        <td>
+                            Current email: <%= Student[0].Email %><br>
                                 <label for="email">New email:</label>
-                                <input type="text" name="email" size="16" required>
-                                <input type="submit" value="Change">
-                            </form>
-                    </td>
-                    <td>
-                        <form action="/faculty/<%= Student[0].Advisor %>" method="GET">
+                                <input type="text" name="email" size="16">
+                        </td>
+                        <td>
                             <input type="submit" value="Done">
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
+            </form>
 </body>
