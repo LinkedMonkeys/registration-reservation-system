@@ -1,18 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faculty Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
 </head>
+
 <body>
+    <h1>Viewing student advisees for <%= fac_info.First_Name+" "+fac_info.Last_Name%>.</h1>
 
-<h1>Faculty Dashboard</h1>
-
-<p><%= fac_id %></p>
-<% for(var i=0; i<name_entries.length; i++) { %>
-    <p><%= name_entries[i]['First_Name']%> <%= name_entries[i]['Last_Name']%></p>
-<% } %>
-
+    <h2>Student List</h2>
+    <% if (student_info && student_info.length> 0) { %>
+        <table border=" 1">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Classification</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% student_info.forEach(student=> { %>
+                    <tr>
+                        <td>
+                            <%= student.First_Name %>
+                        </td>
+                        <td>
+                            <%= student.Last_Name %>
+                        </td>
+                        <td>
+                            <%= student.Group %>
+                        </td>
+                        <td>
+                            <%= student.Email %>
+                        </td>
+                        <td>
+                            <form action="/faculty/edit_student/<%= student.Person_ID %>">
+                                <input type="submit" value="Edit">
+                            </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+            </table>
+            <td>
+                <% }; %>
+            </td>
 </body>
+
 </html>

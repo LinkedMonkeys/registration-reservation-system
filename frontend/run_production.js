@@ -22,54 +22,142 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-//Route to faculty dashboard, requires a unique key //STICH IN CORBIN'S STUDENT VIEWS AND KRIS'S TIME VIEWS
-app.get('/faculty_main/:fac_id', (req, res) => {
-  //Query returns the full names of students under specific advisor
-  const facultySqlQuery =
-    `SELECT First_Name, Last_Name
-FROM Persons
-Where Advisor = (
-SELECT Person_ID 
-FROM Persons
-WHERE "Key/URL_Specific" = "${req.params.fac_id}"
-)`
-  // console.log(facultySqlQuery);
-  //Query validates a fac_id to determine whether it is a real key belonging
+//Route to faculty dashboard, requires a unique key //STICH IN KRIS'S TIME VIEWS
+app.get('/faculty_main/:fac_key', (req, res) => {
+  //Query returns all information of students under a specific advisor
+  const studentInfoSqlQuery =
+    `SELECT *
+    FROM Persons
+    Where Advisor = (
+    SELECT Person_ID 
+    FROM Persons
+    WHERE Unique_Key = "${req.params.fac_key}"
+    )`
+
+  //Query validates a fac_key to determine whether it is a real key belonging
   //to a professor in the database.
   const validateFacultyQuery =
-    `SELECT Person_ID 
-FROM Persons
-WHERE "Key/URL_Specific" = "${req.params.fac_id}" AND "Group" = "Professor"
-`
+    `SELECT *
+    FROM Persons
+    WHERE Unique_Key = "${req.params.fac_key}" AND "Group" = "Professor"
+    `
   // console.log(validateFacultyQuery);
   //Runs validateFacultyQuery
-  db.get(validateFacultyQuery, (err, professor_id) => {
+  db.get(validateFacultyQuery, (err, fac_info) => {
     if (err) {
       console.log("Error accessing database.")
       return res.status(500).send('Error retrieving data from database');
     }
 
-    if (professor_id) { // If validateFacultyQuery was successful...
-      console.log(professor_id);
-      db.all(facultySqlQuery, [], (err, name_entries) => {
+    if (fac_info) { // If validateFacultyQuery was successful...
+      console.log(fac_info);
+      db.all(studentInfoSqlQuery, [], (err, student_info) => {
         if (err) {
           console.log("Error accessing database.")
           return res.status(500).send('Error retrieving data from database');
         }
 
-        if (name_entries) { // If facultySqlQuery was successful...
-          console.log(name_entries);
+        if (student_info) { // If studentInfoSqlQuery was successful...
+          console.log(student_info);
           // This asks the .js to render views/faculty_view_main.ejs. 
-          res.render('faculty_view_main', { fac_id: req.params.fac_id, name_entries: name_entries });
+          res.render('faculty_view_main', { fac_info: fac_info, student_info: student_info });
         } else {
-          res.render('invalid_key', { key: req.params.fac_id });
+          res.render('invalid_key', { key: req.params.fac_key });
         }
       });
     } else {
       //If an invalid fac_id is submitted, the user will be directed to views/invalid_key.ejs.
       console.log("Invalid key used on /faculty_main.");
-      res.render('invalid_key', { key: req.params.fac_id });
+      res.render('invalid_key', { key: req.params.fac_key });
     }
+  });
+});
+
+//Route for editing students page 
+app.get('/faculty/edit_student/:student_id', (req, res) => {
+  const studentQuery = `SELECT * FROM Persons WHERE Person_ID IS "${req.params.student_id}"`;
+
+  db.all(studentQuery, [], (err, student) => {
+    if (err) {
+      console.error('Error retrieving the student:', err);
+      return res.status(500).send('Error retrieving the student');
+    }
+
+    res.render('edit_student', {
+      Student: student,
+    });
+  });
+});
+
+//Updates student information
+app.post('/update-student', (req, res) => {
+  const { student_id, first_name, last_name, group, email, fac_id } = req.body;
+
+  if (first_name != "") {
+    changeFirstNameQuery = `
+    UPDATE Persons
+    SET First_Name = "${first_name}"
+    WHERE Person_ID IS "${student_id}"
+    `;
+    db.run(changeFirstNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+    });
+  }
+  if (last_name != "") {
+    changeLastNameQuery = `
+    UPDATE Persons
+    SET Last_Name = "${last_name}"
+    WHERE Person_ID IS "${student_id}"
+    `;
+    db.run(changeLastNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+    });
+  }
+  if (group != "") {
+    changeGroupQuery = `
+    UPDATE Persons
+    SET "Group" = "${group}"
+    WHERE Person_ID IS "${student_id}"
+    `;
+    db.run(changeGroupQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing classification:', err.message);
+        return res.status(500).send('Error changing classification');
+      }
+    });
+  }
+  if (email != "") {
+    changeEmailQuery = `
+    UPDATE Persons
+    SET Email = "${email}"
+    WHERE Person_ID IS "${student_id}"
+    `;
+    db.run(changeEmailQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing email:', err.message);
+        return res.status(500).send('Error changing email');
+      }
+    });
+  }
+
+  const getUniqueKeyQuery = `
+  SELECT Unique_Key
+  FROM Persons
+  WHERE Person_ID IS "${fac_id}"
+  `;
+  db.all(getUniqueKeyQuery, [], (err, fac) => {
+    if (err) {
+      console.error('Error retrieving the student:', err);
+      return res.status(500).send('Error retrieving the student');
+    }
+
+    res.redirect('/faculty_main/' + fac[0].Unique_Key);
   });
 });
 
@@ -78,18 +166,16 @@ app.get('/student_dashboard/:stu_id', (req, res) => {
   //Query returns the full name of the student who matches the input id.
   const studentSqlQuery =
     `SELECT First_Name, Last_Name
-  FROM Persons
-  Where "Group" != "Professor" AND "Key/URL_Specific" = "${req.params.stu_id}"
-  `
-  // console.log(studentSqlQuery);
-
+    FROM Persons
+    Where "Group" != "Professor" AND Unique_Key = "${req.params.stu_id}"
+    `
   //Query validates a stu_id to determine whether it is a real key belonging
   //to a student in the database.
   const validateStudentQuery =
     `SELECT Person_ID 
- FROM Persons
-  Where "Group" != "Professor" AND "Key/URL_Specific" = "${req.params.stu_id}"
-`
+    FROM Persons
+    Where "Group" != "Professor" AND "Key/URL_Specific" = "${req.params.stu_id}"
+    `
   db.get(validateStudentQuery, (err, student_id) => {
     if (err) {
       console.log("Error accessing database.")
