@@ -7,7 +7,7 @@ create table Persons
     Last_Name   text NOT NULL,
     First_Name  text NOT NULL,
     Email       text NOT NULL,
-    "Key/URL_Specific"    text NOT NULL,
+    "Unique_Key"    text NOT NULL,
     Advisor     integer NOT NULL,
     primary key (Person_ID),
     foreign key (Advisor) references RegistrationList (Person_ID)
