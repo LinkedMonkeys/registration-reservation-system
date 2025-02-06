@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Meeting Time</title>
+</head>
+<body>
+  
+  <h1>Edit Meeting Time</h1>
+
+  <form action="/meeting-times/update" method="POST">
+    <input type="hidden" name="time_id" value="<%= time.Time_ID %>">
+
+    <label for="new_date">New Date:</label>
+    <input type="date" name="new_date" value="<%= time.Date_Available %>" required>
+
+    <label for="new_time">New Time:</label>
+    <input type="text" name="new_time" value="<%= time.Time %>" required>
+
+    <button type="submit">Update</button>
+  </form>
+
+</body>
+</html>

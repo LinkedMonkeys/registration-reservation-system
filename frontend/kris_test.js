@@ -5,9 +5,8 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-
 //Is needed to use POST 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.urlencoded({ extended: true }));
 
 // Path to connect to the database
 const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
@@ -21,174 +20,169 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-// Main page route where available registration times are listed
-app.get('/', (req, res) => {
-  const personsQuery = `SELECT * FROM Persons`;
-  db.all(personsQuery, [], (err, personsRows) => {
+//Route for ?? page 
+app.get('/faculty/:professor_id', (req, res) => {
+  const studentListQuery = `SELECT * FROM Persons WHERE Advisor IS "${req.params.professor_id}"`;
+  const userNameQuery = `SELECT * FROM Persons Where Person_ID IS "${req.params.professor_id}"`;
+
+  db.all(studentListQuery, [], (err, studentList) => {
     if (err) {
-      return res.status(500).send('Error retrieving data from Persons table');
+      console.error('Error retrieving student list:', err);
+      return res.status(500).send('Error retrieving student list');
     }
-
-    const registrationListQuery = `SELECT * FROM RegistrationList WHERE Student_ID IS NULL`;
-    db.all(registrationListQuery, [], (err, registrationListRows) => {
+    db.all(userNameQuery, [], (err, userName) => {
       if (err) {
-        return res.status(500).send('Error retrieving data from RegistrationList table');
+        console.error('Error retrieving name:', err);
+        return res.status(500).send('Error retrieving name');
       }
-
-      const date_requested = null;
-      const time_requested = null;
-
-      //passing me(Kristopher) as a place holder
-      const person = personsRows.length > 0 ? personsRows[3]: null;
-
-      res.render('request_time_kris', { 
-        key: null, 
-        Persons: person,  
-        RegistrationList: registrationListRows,
-        time_entries: registrationListRows ,
-        date_requested: date_requested,
-        time_requested: time_requested
+      res.render('student_list', {
+        User: userName,
+        StudentList: studentList,
       });
     });
   });
 });
 
-//Route for faculty page 
-app.get('/faculty', (req, res) => {
-  const registrationListQuery = `SELECT * FROM RegistrationList WHERE Student_ID IS NULL`;
+//STUFF FOR ADDING TIMES
+app.get('/faculty/:professor_id/add_meeting_times', (req, res) => {
+  const availableTimesQuery = `SELECT * FROM RegistrationList`;
 
-  db.all(registrationListQuery, [], (err, availableSlots) => {
+  db.all(availableTimesQuery, [], (err, availableTimes) => {
     if (err) {
-      console.error('Error retrieving available slots:', err);
-      return res.status(500).send('Error retrieving available slots');
+      console.error('Error retrieving times:', err);
+      return res.status(500).send('Error retrieving times');
     }
-
-    const studentRegistrationsQuery = `SELECT * FROM RegistrationList WHERE Student_ID IS NOT NULL`;
-
-    db.all(studentRegistrationsQuery, [], (err, studentRegistrations) => {
-      if (err) {
-        console.error('Error retrieving student registrations:', err);
-        return res.status(500).send('Error retrieving student registrations');
-      }
-
-      res.render('faculty_dashboard_kris', {
-        RegistrationList: studentRegistrations,
-        availableSlots: availableSlots,
-      });
-    });
+    res.render('add_meeting_times_view', { availableTimes });
   });
 });
 
+// Edit a specific  time
+app.get('/faculty/:professor_id/edit_meeting_times/:time?', (req, res) => {
+  const timeQuery = `SELECT * FROM RegistrationList WHERE Time = "${req.params.time}"`;
 
+  db.get(timeQuery, [], (err, time) => {
+    if (err) {
+      console.error('Error retrieving time:', err);
+      return res.status(500).send('Error retrieving time');
+    }
+    res.render('edit_meeting_time', { time });
+  });
+});
 
+// Update a meeting time
+app.post('/meeting-times/update', (req, res) => {
+  const { time_id, new_date, new_time } = req.body;
 
-//Route for faculty to handle unregistering a student from their current registration
-app.post('/unregister', (req, res) => {
-  const { student_id, current_date, current_time } = req.body;
-
-  const unregisterQuery = `
+  const updateQuery = `
     UPDATE RegistrationList
-    SET Student_ID = NULL
-    WHERE Date_Available = ? AND Time = ? AND Student_ID = ?
+    SET Date_Available = "${new_date}", Time = "${new_time}"
+    WHERE Time = "${time_id}"
   `;
 
-  db.run(unregisterQuery, [current_date, current_time, student_id], function(err) {
+  db.run(updateQuery, [], function (err) {
     if (err) {
-      console.error("Error unregistering student:", err);
-      return res.status(500).send('Error unregistering');
+      console.error('Error updating time:', err.message);
+      return res.status(500).send('Error updating time');
     }
-
-    res.send(`You have successfully unregistered from ${current_date} at ${current_time}. You can now select a new slot.`);
+    res.redirect('/meeting-times/add');
   });
 });
 
-
-//Route for faculty adding  time slots
-app.post('/add-time-slot', (req, res) => {
-  const { date, time } = req.body;
-
-  const addSlotQuery = `
-    INSERT INTO RegistrationList (Date_Available, Time, Student_ID) 
-    VALUES (?, ?, NULL)
-  `;
-  
-  db.run(addSlotQuery, [date, time], function(err) {
-    if (err) {
-      console.error('Error adding time slot:', err.message);
-      return res.status(500).send('Error adding time slot');
-    }
-    
-    res.redirect('/faculty');
-  });
+app.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
 });
 
+//Route for editing students page 
+app.get('/faculty/edit_student/:student_id', (req, res) => {
+  const studentQuery = `SELECT * FROM Persons WHERE Person_ID IS "${req.params.student_id}"`;
 
-// //Route for faculty deleting a time slots
-app.post('/delete-time-slot', (req, res) => {
-  const { date, time } = req.body;
-
-  const deleteSlotQuery = `
-    DELETE FROM RegistrationList
-    WHERE Date_Available = ? AND Time = ?
-  `;
-  
-  db.run(deleteSlotQuery, [date, time], function(err) {
+  db.all(studentQuery, [], (err, student) => {
     if (err) {
-      console.error('Error deleting time slot:', err.message);
-      return res.status(500).send('Error deleting time slot');
+      console.error('Error retrieving the student:', err);
+      return res.status(500).send('Error retrieving the student');
     }
 
-    res.redirect('/faculty');
-  });
-});
-
-// Route to handle registering a student for a new time slot
-app.post('/register', (req, res) => {
-  const { student_id, new_date, new_time } = req.body;
-
-  const checkQuery = `SELECT * FROM RegistrationList WHERE Student_ID = ?`;
-  
-  db.get(checkQuery, [student_id], (err, row) => {
-    if (err) {
-      console.error("Error checking student registration:", err);
-      return res.status(500).send('Error checking registration');
-    }
-
-    if (row) {
-      return res.status(400).send('You are already registered. Please change your existing registration.');
-    }
-
-    const checkSlotQuery = `SELECT * FROM RegistrationList WHERE Date_Available = ? AND Time = ? AND Student_ID IS NULL`;
-
-    db.get(checkSlotQuery, [new_date, new_time], (err, row) => {
-      if (err) {
-        console.error("Error checking slot availability:", err);
-        return res.status(500).send('Error checking slot availability');
-      }
-
-      if (!row) {
-        return res.status(400).send('The selected slot is no longer available');
-      }
-
-      const updateQuery = `
-        UPDATE RegistrationList
-        SET Student_ID = ?
-        WHERE Date_Available = ? AND Time = ?
-      `;
-
-      db.run(updateQuery, [student_id, new_date, new_time], function(err) {
-        if (err) {
-          console.error("Error updating registration slot:", err);
-          return res.status(500).send('Error registering for the selected time');
-        }
-
-        res.send(`You have successfully registered for ${new_date} at ${new_time}`);
-      });
+    res.render('edit_student', {
+      Student: student,
     });
   });
 });
+
+//Changes first or last name
+app.post('/change-name', (req, res) => {
+  const { student_id, professor_id, first_name, last_name } = req.body;
+
+  if (first_name == undefined) {
+    changeNameQuery = `
+    UPDATE Persons
+    SET Last_Name = "${last_name}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changing name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+
+      res.redirect('/faculty/edit_student/' + student_id);
+    });
+  } else if (last_name == undefined) {
+    changeNameQuery = `
+    UPDATE Persons
+    SET First_Name = "${first_name}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+    db.run(changeNameQuery, [], function (err) {
+      if (err) {
+        console.error('Error changin name:', err.message);
+        return res.status(500).send('Error changing name');
+      }
+
+      res.redirect('/faculty/edit_student/' + student_id);
+    }); 
+  }
+});
+
+//Set a students classification/Group
+app.post('/change-group', (req, res) => {
+  const { student_id, professor_id, group } = req.body;
+  console.log(group);
+  changeGroupQuery = `
+    UPDATE Persons
+    SET "Group" = "${group}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+  db.run(changeGroupQuery, [], function (err) {
+    if (err) {
+      console.error('Error changing classification:', err.message);
+      return res.status(500).send('Error changing classification');
+    }
+
+    res.redirect('/faculty/edit_student/' + student_id);
+  });
+});
+
+//Changes the email
+app.post('/change-email', (req, res) => {
+  const { student_id, professor_id, email } = req.body;
+
+  changeEmailQuery = `
+    UPDATE Persons
+    SET Email = "${email}"
+    WHERE Person_ID IS "${student_id}"
+  `;
+  db.run(changeEmailQuery, [], function (err) {
+    if (err) {
+      console.error('Error changing email:', err.message);
+      return res.status(500).send('Error changing email');
+    }
+
+    res.redirect('/faculty/edit_student/' + student_id);
+  });
+
 
 // Start the server on port 3000
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
+});
 });

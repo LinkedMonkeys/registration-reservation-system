@@ -90,7 +90,7 @@ app.post('/change-name', (req, res) => {
       }
 
       res.redirect('/faculty/edit_student/' + student_id);
-    });
+    }); 
   }
 });
 
