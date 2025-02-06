@@ -8,11 +8,11 @@
 </head>
 
 <body>
-    <h1>Viewing student advisees for <%= fac_info.First_Name+" "+fac_info.Last_Name%>.</h1>
+    <h1>Viewing student advisees for <%= fac_info.First_Name + " " + fac_info.Last_Name %>.</h1>
 
     <h2>Student List</h2>
-    <% if (student_info && student_info.length> 0) { %>
-        <table border=" 1">
+    <% if (student_info && student_info.length > 0) { %>
+        <table border="1">
             <thead>
                 <tr>
                     <th>First Name</th>
@@ -23,32 +23,53 @@
                 </tr>
             </thead>
             <tbody>
-                <% student_info.forEach(student=> { %>
+                <% student_info.forEach(student => { %>
                     <tr>
-                        <td>
-                            <%= student.First_Name %>
-                        </td>
-                        <td>
-                            <%= student.Last_Name %>
-                        </td>
-                        <td>
-                            <%= student.Group %>
-                        </td>
-                        <td>
-                            <%= student.Email %>
-                        </td>
+                        <td><%= student.First_Name %></td>
+                        <td><%= student.Last_Name %></td>
+                        <td><%= student.Group %></td>
+                        <td><%= student.Email %></td>
                         <td>
                             <form action="/faculty/edit_student/<%= student.Person_ID %>">
                                 <input type="submit" value="Edit">
                             </form>
                         </td>
                     </tr>
-                    <% }); %>
+                <% }); %>
             </tbody>
-            </table>
-            <td>
-                <% }; %>
-            </td>
+        </table>
+    <% } else { %>
+        <p>No students found.</p>
+    <% } %>
+
+    <h2>Available Meeting Times</h2>
+    <% if (availableTimes && availableTimes.length > 0) { %>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% availableTimes.forEach(time => { %>
+                    <tr>
+                        <td><%= time.Date_Available %></td>
+                        <td><%= time.Time %></td>
+                        <td>
+                            <form action="/edit_meeting_times/<%= time.Time %>">
+                                <input type="submit" value="Edit">
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No available meeting times found.</p>
+    <% } %>
+
 </body>
 
 </html>

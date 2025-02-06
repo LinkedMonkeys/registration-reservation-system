@@ -52,7 +52,7 @@ app.get('/faculty/:professor_id/add_meeting_times', (req, res) => {
       console.error('Error retrieving times:', err);
       return res.status(500).send('Error retrieving times');
     }
-    res.render('add_meeting_times_view', { availableTimes });
+    res.render('faculty_view_main', { availableTimes });
   });
 });
 

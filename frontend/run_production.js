@@ -33,6 +33,16 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     FROM Persons
     WHERE Unique_Key = "${req.params.fac_key}"
     )`
+  //same for time
+    const timeInfoSqlQuery = `
+    SELECT * 
+    FROM RegistrationList 
+    WHERE Professor_ID = (
+      SELECT Person_ID 
+      FROM Persons 
+      WHERE Unique_Key = "${req.params.fac_key}"
+    )
+  `;
 
   //Query validates a fac_key to determine whether it is a real key belonging
   //to a professor in the database.
@@ -57,14 +67,28 @@ app.get('/faculty_main/:fac_key', (req, res) => {
           return res.status(500).send('Error retrieving data from database');
         }
 
+        //same thing but for times
+        db.all(timeInfoSqlQuery, [], (err, availableTimes) => {
+          if (err) {
+            console.log("Error retrieving available meeting times.");
+            return res.status(500).send('Error retrieving available times');
+          }
+
         if (student_info) { // If studentInfoSqlQuery was successful...
           console.log(student_info);
           // This asks the .js to render views/faculty_view_main.ejs. 
-          res.render('faculty_view_main', { fac_info: fac_info, student_info: student_info });
+          res.render('faculty_view_main', { 
+
+            //Easier to read this way
+            fac_info: fac_info, 
+            student_info: student_info,
+            availableTimes: availableTimes
+          
+          });
         } else {
           res.render('invalid_key', { key: req.params.fac_key });
         }
-      });
+      }); });
     } else {
       //If an invalid fac_id is submitted, the user will be directed to views/invalid_key.ejs.
       console.log("Invalid key used on /faculty_main.");
@@ -72,6 +96,7 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     }
   });
 });
+
 
 //Route for editing students page 
 app.get('/faculty/edit_student/:student_id', (req, res) => {
