@@ -34,7 +34,7 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     WHERE Unique_Key = "${req.params.fac_key}"
     )`
   //Query returns all information of registered times for specific advisor
-    const timeInfoSqlQuery = `
+  const timeInfoSqlQuery = `
     SELECT * 
     FROM RegistrationList 
     WHERE Professor_ID = (
@@ -74,31 +74,28 @@ app.get('/faculty_main/:fac_key', (req, res) => {
             return res.status(500).send('Error retrieving available times');
           }
 
-        if (student_info) { // If studentInfoSqlQuery was successful...
-          console.log(student_info);
-          // This asks the .js to render views/faculty_view_main.ejs. 
-          res.render('faculty_view_main', { 
+          if (student_info) { // If studentInfoSqlQuery was successful...
+            console.log(student_info);
+            // This asks the .js to render views/faculty_view_main.ejs. 
+            res.render('faculty_view_main', {
 
-            //Easier to read this way
-            fac_info: fac_info, 
-            student_info: student_info,
-            availableTimes: availableTimes
-          
-          });
-        } else {
-          res.render('invalid_key', { key: req.params.fac_key });
-        }
-      }); });
+              //Easier to read this way
+              fac_info: fac_info,
+              student_info: student_info,
+              availableTimes: availableTimes
+
+            });
+          } else {
+            res.render('invalid_key', { key: req.params.fac_key });
+          }
+        });
+      });
     } else {
       //If an invalid fac_id is submitted, the user will be directed to views/invalid_key.ejs.
       console.log("Invalid key used on /faculty_main.");
       res.render('invalid_key', { key: req.params.fac_key });
     }
   });
-
-
-
-  
 });
 
 
@@ -174,9 +171,22 @@ app.post('/update-student', (req, res) => {
       }
     });
   }
+  const getUniqueKeyQuery = `
+  SELECT Unique_Key
+  FROM Persons
+  WHERE Person_ID IS "${fac_id}"
+  `;
+  db.all(getUniqueKeyQuery, [], (err, fac) => {
+    if (err) {
+      console.error('Error retrieving the student:', err);
+      return res.status(500).send('Error retrieving the student');
+    }
+    res.redirect('/faculty_main/' + fac[0].Unique_Key);
+  });
+});
 
- //Editing Meeting Times
- app.get('/faculty/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
+//Editing Meeting Times
+app.get('/faculty/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
   const { professor_id, date, time } = req.params;
 
   const meetingQuery = `
@@ -226,7 +236,7 @@ app.post('/update-meeting', (req, res) => {
     }
 
     res.redirect('/faculty'); // Redirect back to faculty dashboard after update
-    });
+  });
 
 
 
@@ -288,7 +298,6 @@ app.get('/student_dashboard/:stu_id', (req, res) => {
       res.render('invalid_key', { key: req.params.stu_id });
     }
   });
-});
 });
 
 
