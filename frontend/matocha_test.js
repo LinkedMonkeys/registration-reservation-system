@@ -45,7 +45,7 @@ app.get('/request_time/:key/:date_requested?/:time_requested?', (req, res) => {
   FROM RegistrationList rl
   JOIN (SELECT *
     FROM Persons
-    WHERE "Key/URL_Specific" = "${req.params.key}") as p
+    WHERE Unique_Key = "${req.params.key}") as p
   ON rl.Professor_ID = p.Advisor AND rl."Group" = p."Group" AND rl.Student_ID = 0
   ORDER BY Date_Available, Time`
   console.log(sqlQuery);
