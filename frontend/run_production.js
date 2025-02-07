@@ -33,7 +33,7 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     FROM Persons
     WHERE Unique_Key = "${req.params.fac_key}"
     )`
-  //same for time
+  //Query returns all information of registered times for specific advisor
     const timeInfoSqlQuery = `
     SELECT * 
     FROM RegistrationList 
@@ -199,7 +199,7 @@ app.get('/student_dashboard/:stu_id', (req, res) => {
   const validateStudentQuery =
     `SELECT Person_ID 
     FROM Persons
-    Where "Group" != "Professor" AND "Key/URL_Specific" = "${req.params.stu_id}"
+    Where "Group" != "Professor" AND Unique_Key = "${req.params.stu_id}"
     `
   db.get(validateStudentQuery, (err, student_id) => {
     if (err) {
