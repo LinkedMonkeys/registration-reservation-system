@@ -95,6 +95,10 @@ app.get('/faculty_main/:fac_key', (req, res) => {
       res.render('invalid_key', { key: req.params.fac_key });
     }
   });
+
+
+
+  
 });
 
 
@@ -171,10 +175,65 @@ app.post('/update-student', (req, res) => {
     });
   }
 
+ //Editing Meeting Times
+ app.get('/faculty/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
+  const { professor_id, date, time } = req.params;
+
+  const meetingQuery = `
+    SELECT * FROM RegistrationList 
+    WHERE Professor_ID IS "${professor_id}" 
+    AND Date_Available IS "${date}" 
+    AND Time IS "${time}"
+  `;
+
+  db.all(meetingQuery, [], (err, meeting) => {
+    if (err) {
+      console.error('Error retrieving the meeting:', err);
+      return res.status(500).send('Error retrieving the meeting');
+    }
+
+    if (meeting.length === 0) {
+      return res.status(404).send('Meeting time not found');
+    }
+
+    res.render('edit_meeting_times', {
+      Meeting: meeting[0], // Use the first result
+    });
+  });
+});
+
+// Updating Meeting Times
+app.post('/update-meeting', (req, res) => {
+  const { professor_id, old_date, old_time, new_date, new_time } = req.body;
+
+  // Check if the user provided new values
+  if (!new_date || !new_time) {
+    return res.status(400).send('New date and time are required');
+  }
+
+  const updateQuery = `
+    UPDATE RegistrationList
+    SET Date_Available = "${new_date}", Time = "${new_time}"
+    WHERE Professor_ID IS "${professor_id}" 
+    AND Date_Available IS "${old_date}"
+    AND Time IS "${old_time}"
+  `;
+
+  db.run(updateQuery, [], function (err) {
+    if (err) {
+      console.error('Error updating meeting time:', err.message);
+      return res.status(500).send('Error updating meeting time');
+    }
+
+    res.redirect('/faculty'); // Redirect back to faculty dashboard after update
+    });
+
+
+
   const getUniqueKeyQuery = `
   SELECT Unique_Key
   FROM Persons
-  WHERE Person_ID IS "${fac_id}"
+  WHERE Person_ID IS "${professor_id}"
   `;
   db.all(getUniqueKeyQuery, [], (err, fac) => {
     if (err) {
@@ -230,6 +289,8 @@ app.get('/student_dashboard/:stu_id', (req, res) => {
     }
   });
 });
+});
+
 
 // Start the server on port 3000
 app.listen(3000, () => {
