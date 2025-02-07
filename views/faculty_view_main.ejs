@@ -30,7 +30,7 @@
                         <td><%= student.Group %></td>
                         <td><%= student.Email %></td>
                         <td>
-                            <form action="/faculty/edit_student/<%= student.Person_ID %>">
+                            <form action="/faculty_main/edit_student/<%= student.Person_ID %>">
                                 <input type="submit" value="Edit">
                             </form>
                         </td>
@@ -58,7 +58,7 @@
                         <td><%= time.Date_Available %></td>
                         <td><%= time.Time %></td>
                         <td>
-                            <form action="/faculty/edit_meeting_time/<%= time.Professor_ID %>/<%= time.Date_Available %>/<%= time.Time %>">
+                            <form action="/faculty_main/edit_meeting_time/<%= time.Professor_ID %>/<%= time.Date_Available %>/<%= time.Time %>">
                                 <input type="submit" value="Edit">
                             </form>
                             

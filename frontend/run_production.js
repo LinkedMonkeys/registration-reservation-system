@@ -34,8 +34,8 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     WHERE Unique_Key = "${req.params.fac_key}"
     )`
   //Query returns all information of registered times for specific advisor
-  const timeInfoSqlQuery = `
-    SELECT * 
+  const timeInfoSqlQuery =
+    `SELECT * 
     FROM RegistrationList 
     WHERE Professor_ID = (
       SELECT Person_ID 
@@ -75,7 +75,7 @@ app.get('/faculty_main/:fac_key', (req, res) => {
           }
 
           if (student_info) { // If studentInfoSqlQuery was successful...
-            console.log(student_info);
+            // console.log(student_info);
             // This asks the .js to render views/faculty_view_main.ejs. 
             res.render('faculty_view_main', {
 
@@ -100,7 +100,7 @@ app.get('/faculty_main/:fac_key', (req, res) => {
 
 
 //Route for editing students page 
-app.get('/faculty/edit_student/:student_id', (req, res) => {
+app.get('/faculty_main/edit_student/:student_id', (req, res) => {
   const studentQuery = `SELECT * FROM Persons WHERE Person_ID IS "${req.params.student_id}"`;
 
   db.all(studentQuery, [], (err, student) => {
@@ -120,8 +120,8 @@ app.post('/update-student', (req, res) => {
   const { student_id, first_name, last_name, group, email, fac_id } = req.body;
 
   if (first_name != "") {
-    changeFirstNameQuery = `
-    UPDATE Persons
+    changeFirstNameQuery =
+    `UPDATE Persons
     SET First_Name = "${first_name}"
     WHERE Person_ID IS "${student_id}"
     `;
@@ -133,8 +133,8 @@ app.post('/update-student', (req, res) => {
     });
   }
   if (last_name != "") {
-    changeLastNameQuery = `
-    UPDATE Persons
+    changeLastNameQuery =
+    `UPDATE Persons
     SET Last_Name = "${last_name}"
     WHERE Person_ID IS "${student_id}"
     `;
@@ -146,8 +146,8 @@ app.post('/update-student', (req, res) => {
     });
   }
   if (group != "") {
-    changeGroupQuery = `
-    UPDATE Persons
+    changeGroupQuery =
+    `UPDATE Persons
     SET "Group" = "${group}"
     WHERE Person_ID IS "${student_id}"
     `;
@@ -159,8 +159,8 @@ app.post('/update-student', (req, res) => {
     });
   }
   if (email != "") {
-    changeEmailQuery = `
-    UPDATE Persons
+    changeEmailQuery =
+    `UPDATE Persons
     SET Email = "${email}"
     WHERE Person_ID IS "${student_id}"
     `;
@@ -171,12 +171,13 @@ app.post('/update-student', (req, res) => {
       }
     });
   }
-  const getUniqueKeyQuery = `
-  SELECT Unique_Key
+  const getUniqueKeyQuery =
+  `SELECT Unique_Key
   FROM Persons
   WHERE Person_ID IS "${fac_id}"
   `;
   db.all(getUniqueKeyQuery, [], (err, fac) => {
+    console.log("THIS IS A MESSAGE" + fac[0].Unique_Key)
     if (err) {
       console.error('Error retrieving the student:', err);
       return res.status(500).send('Error retrieving the student');
@@ -186,14 +187,12 @@ app.post('/update-student', (req, res) => {
 });
 
 //Editing Meeting Times
-app.get('/faculty/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
-  const { professor_id, date, time } = req.params;
-
-  const meetingQuery = `
-    SELECT * FROM RegistrationList 
-    WHERE Professor_ID IS "${professor_id}" 
-    AND Date_Available IS "${date}" 
-    AND Time IS "${time}"
+app.get('/faculty_main/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
+  const meetingQuery =
+    `SELECT * FROM RegistrationList 
+    WHERE Professor_ID IS "${req.params.professor_id}" 
+    AND Date_Available IS "${req.params.date}" 
+    AND Time IS "${req.params.time}"
   `;
 
   db.all(meetingQuery, [], (err, meeting) => {
@@ -206,23 +205,23 @@ app.get('/faculty/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
       return res.status(404).send('Meeting time not found');
     }
 
-    res.render('edit_meeting_times', {
-      Meeting: meeting[0], // Use the first result
+    res.render('edit_meeting_time', {
+      Meeting: meeting
     });
   });
 });
 
 // Updating Meeting Times
 app.post('/update-meeting', (req, res) => {
-  const { professor_id, old_date, old_time, new_date, new_time } = req.body;
+  const { professor_id, old_date, old_time, new_date, new_time, fac_id} = req.body;
 
   // Check if the user provided new values
   if (!new_date || !new_time) {
     return res.status(400).send('New date and time are required');
   }
 
-  const updateQuery = `
-    UPDATE RegistrationList
+  const updateQuery =
+    `UPDATE RegistrationList
     SET Date_Available = "${new_date}", Time = "${new_time}"
     WHERE Professor_ID IS "${professor_id}" 
     AND Date_Available IS "${old_date}"
@@ -235,22 +234,21 @@ app.post('/update-meeting', (req, res) => {
       return res.status(500).send('Error updating meeting time');
     }
 
-    res.redirect('/faculty'); // Redirect back to faculty dashboard after update
+    // res.redirect('/faculty_main/ABC345'); // Redirect back to faculty dashboard after update
   });
 
 
 
-  const getUniqueKeyQuery = `
-  SELECT Unique_Key
+  const getUniqueKeyQuery2 =
+  `SELECT Unique_Key
   FROM Persons
-  WHERE Person_ID IS "${professor_id}"
+  WHERE Person_ID IS "${fac_id}"
   `;
-  db.all(getUniqueKeyQuery, [], (err, fac) => {
+  db.all(getUniqueKeyQuery2, [], (err, fac) => {
     if (err) {
       console.error('Error retrieving the student:', err);
       return res.status(500).send('Error retrieving the student');
     }
-
     res.redirect('/faculty_main/' + fac[0].Unique_Key);
   });
 });
