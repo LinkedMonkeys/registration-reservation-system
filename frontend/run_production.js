@@ -237,12 +237,10 @@ app.post('/update-meeting', (req, res) => {
     // res.redirect('/faculty_main/ABC345'); // Redirect back to faculty dashboard after update
   });
 
-
-
   const getUniqueKeyQuery2 =
   `SELECT Unique_Key
   FROM Persons
-  WHERE Person_ID IS "${fac_id}"
+  WHERE Person_ID IS "${professor_id}"
   `;
   db.all(getUniqueKeyQuery2, [], (err, fac) => {
     if (err) {
