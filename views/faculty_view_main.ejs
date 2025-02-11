@@ -15,8 +15,7 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Name</th>
                     <th>Classification</th>
                     <th>Email</th>
                     <th>Action</th>
@@ -25,12 +24,14 @@
             <tbody>
                 <% student_info.forEach(student => { %>
                     <tr>
-                        <td><%= student.First_Name %></td>
-                        <td><%= student.Last_Name %></td>
+                        <td>
+                            <% if (student.Last_Name != 'Available' && student.Last_Name != 'Not Available') { %>
+                            <%= student.First_Name + ' ' + student.Last_Name %>
+                            <% } %></td>
                         <td><%= student.Group %></td>
                         <td><%= student.Email %></td>
                         <td>
-                            <form action="/faculty_main/edit_student/<%= student.Person_ID %>">
+                            <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
                                 <input type="submit" value="Edit">
                             </form>
                         </td>
@@ -42,23 +43,24 @@
         <p>No students found.</p>
     <% } %>
 
-    <h2>Available Meeting Times</h2>
+    <h2>Meeting Times</h2>
     <% if (availableTimes && availableTimes.length > 0) { %>
         <table border="1">
             <thead>
                 <tr>
                     <th>Date</th>
                     <th>Time</th>
+                    <th>Registration Slots</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <% availableTimes.forEach(time => { %>
+                <% availableTimes.forEach(slot => { %>
                     <tr>
-                        <td><%= time.Date_Available %></td>
-                        <td><%= time.Time %></td>
-                        <td>
-                            <form action="/faculty_main/edit_meeting_time/<%= time.Professor_ID %>/<%= time.Date_Available %>/<%= time.Time %>">
+                        <td><%= slot.Date_Available %></td>
+                        <td><%= slot.Time %></td>
+                        <td><%= slot.First_Name + ' ' + slot.Last_Name %><td>
+                            <form action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
                                 <input type="submit" value="Edit">
                             </form>
                             
