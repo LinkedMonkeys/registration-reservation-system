@@ -176,12 +176,13 @@ app.post('/update-student', (req, res) => {
   FROM Persons
   WHERE Person_ID IS "${fac_id}"
   `;
+  console.log(getUniqueKeyQuery);
   db.all(getUniqueKeyQuery, [], (err, fac) => {
-    console.log("THIS IS A MESSAGE" + fac[0].Unique_Key)
     if (err) {
       console.error('Error retrieving the student:', err);
       return res.status(500).send('Error retrieving the student');
     }
+    console.log(fac);
     res.redirect('/faculty_main/' + fac[0].Unique_Key);
   });
 });
@@ -242,11 +243,13 @@ app.post('/update-meeting', (req, res) => {
   FROM Persons
   WHERE Person_ID IS "${professor_id}"
   `;
+  console.log(getUniqueKeyQuery2);
   db.all(getUniqueKeyQuery2, [], (err, fac) => {
     if (err) {
       console.error('Error retrieving the student:', err);
       return res.status(500).send('Error retrieving the student');
     }
+    console.log(fac);
     res.redirect('/faculty_main/' + fac[0].Unique_Key);
   });
 });
