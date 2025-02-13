@@ -61,7 +61,6 @@
                             <form action="/faculty_main/edit_meeting_time/<%= time.Professor_ID %>/<%= time.Date_Available %>/<%= time.Time %>">
                                 <input type="submit" value="Edit">
                             </form>
-                            
                         </td>
                     </tr>
                 <% }); %>
@@ -70,6 +69,11 @@
     <% } else { %>
         <p>No available meeting times found.</p>
     <% } %>
+<!-- 
+  Button for adding times -->
+<form action="/faculty_main/add_meeting_times_view/<%= addtime.Professor_ID %>/<%= addtime.Date_Available %>/<%= addtime.Time %>">
+    <input type="submit" value="Add">
+</form>
 
 </body>
 
