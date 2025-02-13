@@ -218,69 +218,9 @@ app.post('/update-meeting', (req, res) => {
       console.error('Error updating meeting time:', err.message);
       return res.status(500).send('Error updating meeting time');
     }
-
-    // res.redirect('/faculty_main/ABC345'); // Redirect back to faculty dashboard after update
-  });
-
-
-  const getUniqueKeyQuery2 =
-  `SELECT Unique_Key
-  FROM Persons
-  WHERE Person_ID = "${fac_id}"
-  `;
-  db.all(getUniqueKeyQuery2, [professor_id], (err, fac) => {
-    if (err) {
-      console.error('Error updating time:', err);
-      return res.status(500).send('Error updating time');
-    }
-    res.redirect('/faculty_main/' + fac[1].Unique_Key);
-  });
   });
   res.redirect(`/faculty_main/${fac_key}`);
 });
-
-//Route for adding 
-app.post('/faculty_main/add_meeting_times_view/:professor_id', (req, res) => {
-  const { date_available, time } = req.body;
-  const professor_id = req.params.professor_id;
-
-  if (!date_available || !time) {
-      return res.status(400).send("Date and time are required.");
-  }
-
-
-
-const insertQuery = `
-    INSERT INTO RegistrationList (Professor_ID, Date_Available, Time, Student_ID, "Group") 
-    VALUES (?, ?, ?, NULL, NULL)
-`;
-
-// Insert new meeting time
-db.run(insertQuery, [], function (err) {
-    if (err) {
-        console.error('Error adding meeting time:', err.message);
-        return res.status(500).send('Error adding meeting time');
-    }
-
-    // Fetch updated list of available meeting times
-    const selectQuery = `
-        SELECT Date_Available, Time FROM RegistrationList WHERE Professor_ID = ?
-    `;
-
-    db.all(selectQuery, [professor_id], (err, addtimes) => {
-        if (err) {
-            console.error('Error retrieving meeting times:', err.message);
-            return res.status(500).send('Error retrieving meeting times');
-        }
-
-        // Render the view and pass retrieved times
-        res.render('add_meeting_times_view', {
-            addTimes: addtime  // Now properly defined
-        });
-    });
-});
-});
-
 
 //Route to student registration dashboard, requires a unique key
 app.get('/student_main/:student_key', (req, res) => {
