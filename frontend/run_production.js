@@ -28,22 +28,16 @@ app.get('/faculty_main/:fac_key', (req, res) => {
   const studentInfoSqlQuery =
     `SELECT *
     FROM Persons
-    Where Advisor = (
-    SELECT Person_ID 
-    FROM Persons
-    WHERE Unique_Key = "${req.params.fac_key}"
-    )`
+    Where Advisor = "${req.params.fac_key}"
+    `
   //Query returns all information of registered times for specific advisor
-  const timeInfoSqlQuery =
-    `SELECT * 
-    FROM RegistrationList 
-    WHERE Professor_ID = (
-      SELECT Person_ID 
-      FROM Persons 
-      WHERE Unique_Key = "${req.params.fac_key}"
-    )
-  `;
-
+  const timeInfoQuery =
+    `SELECT *
+    FROM RegistrationList rl 
+    JOIN (SELECT *
+    FROM Persons) as p
+    WHERE rl.Professor_ID == "${req.params.fac_key}" AND rl.Student_ID = p.Unique_Key;
+    `;
   //Query validates a fac_key to determine whether it is a real key belonging
   //to a professor in the database.
   const validateFacultyQuery =
@@ -51,11 +45,11 @@ app.get('/faculty_main/:fac_key', (req, res) => {
     FROM Persons
     WHERE Unique_Key = "${req.params.fac_key}" AND "Group" = "Professor"
     `
-  // console.log(validateFacultyQuery);
+  console.log(validateFacultyQuery + ' | validateFacultyQuery');
   //Runs validateFacultyQuery
   db.get(validateFacultyQuery, (err, fac_info) => {
     if (err) {
-      console.log("Error accessing database.")
+      console.log("Error accessing database | validateFacultyQuery.")
       return res.status(500).send('Error retrieving data from database');
     }
 
@@ -63,14 +57,14 @@ app.get('/faculty_main/:fac_key', (req, res) => {
       console.log(fac_info);
       db.all(studentInfoSqlQuery, [], (err, student_info) => {
         if (err) {
-          console.log("Error accessing database.")
+          console.log("Error accessing database | studentInfoQuery.")
           return res.status(500).send('Error retrieving data from database');
         }
 
         //same thing but for times
-        db.all(timeInfoSqlQuery, [], (err, availableTimes) => {
+        db.all(timeInfoQuery, [], (err, time_info) => {
           if (err) {
-            console.log("Error retrieving available meeting times.");
+            console.log("Error retrieving available meeting times | timeInfoQuery.");
             return res.status(500).send('Error retrieving available times');
           }
 
@@ -78,11 +72,10 @@ app.get('/faculty_main/:fac_key', (req, res) => {
             // console.log(student_info);
             // This asks the .js to render views/faculty_view_main.ejs. 
             res.render('faculty_view_main', {
-
               //Easier to read this way
               fac_info: fac_info,
               student_info: student_info,
-              availableTimes: availableTimes
+              time_info: time_info
 
             });
           } else {
@@ -91,17 +84,20 @@ app.get('/faculty_main/:fac_key', (req, res) => {
         });
       });
     } else {
-      //If an invalid fac_id is submitted, the user will be directed to views/invalid_key.ejs.
+      //If an invalid fac_key is submitted, the user will be directed to views/invalid_key.ejs.
       console.log("Invalid key used on /faculty_main.");
       res.render('invalid_key', { key: req.params.fac_key });
     }
   });
 });
 
-
 //Route for editing students page 
-app.get('/faculty_main/edit_student/:student_id', (req, res) => {
-  const studentQuery = `SELECT * FROM Persons WHERE Person_ID IS "${req.params.student_id}"`;
+app.get('/faculty_main/edit_student/:student_key', (req, res) => {
+  const studentQuery =
+    `SELECT * 
+    FROM Persons
+    WHERE Unique_Key IS "${req.params.student_key}"
+    `;
 
   db.all(studentQuery, [], (err, student) => {
     if (err) {
@@ -117,14 +113,14 @@ app.get('/faculty_main/edit_student/:student_id', (req, res) => {
 
 //Updates student information
 app.post('/update-student', (req, res) => {
-  const { student_id, first_name, last_name, group, email, fac_id } = req.body;
+  const { student_key, first_name, last_name, group, email, fac_key } = req.body;
 
   if (first_name != "") {
     changeFirstNameQuery =
-    `UPDATE Persons
-    SET First_Name = "${first_name}"
-    WHERE Person_ID IS "${student_id}"
-    `;
+      `UPDATE Persons
+      SET First_Name = "${first_name}"
+      WHERE Unique_Key IS "${student_key}"
+      `;
     db.run(changeFirstNameQuery, [], function (err) {
       if (err) {
         console.error('Error changing name:', err.message);
@@ -134,9 +130,9 @@ app.post('/update-student', (req, res) => {
   }
   if (last_name != "") {
     changeLastNameQuery =
-    `UPDATE Persons
-    SET Last_Name = "${last_name}"
-    WHERE Person_ID IS "${student_id}"
+      `UPDATE Persons
+      SET Last_Name = "${last_name}"
+      WHERE Unique_Key IS "${student_key}"
     `;
     db.run(changeLastNameQuery, [], function (err) {
       if (err) {
@@ -147,10 +143,10 @@ app.post('/update-student', (req, res) => {
   }
   if (group != "") {
     changeGroupQuery =
-    `UPDATE Persons
-    SET "Group" = "${group}"
-    WHERE Person_ID IS "${student_id}"
-    `;
+      `UPDATE Persons
+      SET "Group" = "${group}"
+      WHERE Unique_Key IS "${student_key}"
+      `;
     db.run(changeGroupQuery, [], function (err) {
       if (err) {
         console.error('Error changing classification:', err.message);
@@ -160,10 +156,10 @@ app.post('/update-student', (req, res) => {
   }
   if (email != "") {
     changeEmailQuery =
-    `UPDATE Persons
-    SET Email = "${email}"
-    WHERE Person_ID IS "${student_id}"
-    `;
+      `UPDATE Persons
+      SET Email = "${email}"
+      WHERE Unique_Key IS "${student_key}"
+      `;
     db.run(changeEmailQuery, [], function (err) {
       if (err) {
         console.error('Error changing email:', err.message);
@@ -171,31 +167,20 @@ app.post('/update-student', (req, res) => {
       }
     });
   }
-  const getUniqueKeyQuery =
-  `SELECT Unique_Key
-  FROM Persons
-  WHERE Person_ID IS "${fac_id}"
-  `;
-  db.all(getUniqueKeyQuery, [], (err, fac) => {
-    console.log("THIS IS A MESSAGE" + fac[0].Unique_Key)
-    if (err) {
-      console.error('Error retrieving the student:', err);
-      return res.status(500).send('Error retrieving the student');
-    }
-    res.redirect('/faculty_main/' + fac[0].Unique_Key);
-  });
+  res.redirect('/faculty_main/' + fac_key);
 });
 
 //Editing Meeting Times
-app.get('/faculty_main/edit_meeting_time/:professor_id/:date/:time', (req, res) => {
+app.get('/faculty_main/edit_meeting_time/:fac_key/:date/:time', (req, res) => {
   const meetingQuery =
-    `SELECT * FROM RegistrationList 
-    WHERE Professor_ID IS "${req.params.professor_id}" 
+    `SELECT * FROM RegistrationList
+    WHERE Professor_ID IS "${req.params.fac_key}" 
     AND Date_Available IS "${req.params.date}" 
     AND Time IS "${req.params.time}"
   `;
 
   db.all(meetingQuery, [], (err, meeting) => {
+    console.log(meeting);
     if (err) {
       console.error('Error retrieving the meeting:', err);
       return res.status(500).send('Error retrieving the meeting');
@@ -213,8 +198,8 @@ app.get('/faculty_main/edit_meeting_time/:professor_id/:date/:time', (req, res) 
 
 // Updating Meeting Times
 app.post('/update-meeting', (req, res) => {
-  const { professor_id, old_date, old_time, new_date, new_time, fac_id} = req.body;
-
+  const { fac_key, old_date, old_time, new_date, new_time } = req.body;
+  console.log(req.body);
   // Check if the user provided new values
   if (!new_date || !new_time) {
     return res.status(400).send('New date and time are required');
@@ -223,11 +208,11 @@ app.post('/update-meeting', (req, res) => {
   const updateQuery =
     `UPDATE RegistrationList
     SET Date_Available = "${new_date}", Time = "${new_time}"
-    WHERE Professor_ID IS "${professor_id}" 
+    WHERE Professor_ID IS "${fac_key}" 
     AND Date_Available IS "${old_date}"
     AND Time IS "${old_time}"
   `;
-
+  console.log(updateQuery, "should see something");
   db.run(updateQuery, [], function (err) {
     if (err) {
       console.error('Error updating meeting time:', err.message);
@@ -250,6 +235,8 @@ app.post('/update-meeting', (req, res) => {
     }
     res.redirect('/faculty_main/' + fac[1].Unique_Key);
   });
+  });
+  res.redirect(`/faculty_main/${fac_key}`);
 });
 
 //Route for adding 
@@ -296,28 +283,28 @@ db.run(insertQuery, [], function (err) {
 
 
 //Route to student registration dashboard, requires a unique key
-app.get('/student_dashboard/:stu_id', (req, res) => {
+app.get('/student_main/:student_key', (req, res) => {
   //Query returns the full name of the student who matches the input id.
   const studentSqlQuery =
     `SELECT First_Name, Last_Name
     FROM Persons
-    Where "Group" != "Professor" AND Unique_Key = "${req.params.stu_id}"
+    Where "Group" != "Professor" AND Unique_Key = "${req.params.student_key}"
     `
-  //Query validates a stu_id to determine whether it is a real key belonging
+  //Query validates a student_key to determine whether it is a real key belonging
   //to a student in the database.
   const validateStudentQuery =
-    `SELECT Person_ID 
+    `SELECT Unique_Key 
     FROM Persons
-    Where "Group" != "Professor" AND Unique_Key = "${req.params.stu_id}"
+    Where "Group" != "Professor" AND Unique_Key = "${req.params.student_key}"
     `
-  db.get(validateStudentQuery, (err, student_id) => {
+  db.get(validateStudentQuery, (err, student_key) => {
     if (err) {
       console.log("Error accessing database.")
       return res.status(500).send('Error retrieving data from database');
     }
 
-    if (student_id) { // If validateStudentQuery was successful...
-      console.log(student_id);
+    if (student_key) { // If validateStudentQuery was successful...
+      console.log(student_key);
       // This asks the .js to render views/student_view_main.ejs. 
       db.all(studentSqlQuery, [], (err, name_entries) => {
         if (err) {
@@ -327,15 +314,15 @@ app.get('/student_dashboard/:stu_id', (req, res) => {
 
         if (name_entries) { // If the query was successful...
           console.log(name_entries);
-          res.render('student_view_main', { stu_id: req.params.stu_id, name_entries: name_entries });
+          res.render('student_view_main', { student_key: req.params.student_key, name_entries: name_entries });
         } else {
-          res.render('invalid_key', { key: req.params.stu_id });
+          res.render('invalid_key', { key: req.params.student_key });
         }
 
       });
     } else {
       console.log("Invalid key used on /student_dashboard.");
-      res.render('invalid_key', { key: req.params.stu_id });
+      res.render('invalid_key', { key: req.params.student_key });
     }
   });
 });
