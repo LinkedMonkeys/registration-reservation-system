@@ -1,3 +1,43 @@
+<!-- Functions to format the meeting times into an easier to read format. -->
+<% 
+// Assuming that date is a string in the YYYY-MM-DD format.
+// function formatDate(date) {
+//     var [year, month, day] = date.split('-');
+//     var monthNames = ["January", "February", "March", "April", "May", "June",
+//         "July", "August", "September", "October", "November", "December"];
+    
+//     // Feel free to change the order of these.
+//     return monthNames[parseInt(month)] + ' ' + parseInt(day) + ', ' + parseInt(year);
+// }
+
+function formatDate(date) {
+    var [year, month, day] = date.split('-');
+    dateObject = new Date(parseInt(year), parseInt(month)-1, parseInt(day));
+
+    return dateObject.toLocaleDateString('en-us', { weekday:"long", year:"numeric", month:"long", day:"numeric"});
+}
+
+// Assuming that time is a string in military time ('0000' through '2359')
+function formatTime(time) {
+    var hourString = time.substring(0, 2);
+    var hour = parseInt(hourString);
+    var minuteString = time.substring(2, 4);
+    var amOrPm;
+
+    if (hour == 0) {
+        hour = 12;
+        amOrPm = 'am';
+    } else if (hour > 12) {
+        hour -= 12;
+        amOrPm = 'pm';
+    } else {
+        amOrPm = 'am';
+    }
+
+    return hour + ':' + minuteString + ' ' + amOrPm;
+}
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,13 +48,25 @@
 <body>
 
 <h1>Hello, <%= name_entries[0].First_Name + " " + name_entries[0].Last_Name %>.</h1>
+<h2>message</h2>
+<!-- A message needs to go here. check notes from board drawing. --> 
+ <!-- IF STUDENT HAS NO TIME:
+"Please register for a time from the list below:" -->
 
-<h2>A message needs to go here. check notes from board drawing.</h2>
+<!-- IF STUDENT HAS A REGISTERED TIME:
+"You are currently registered to meet with Dr. 'X' at 'Date, Time'. If you would
+like to change your registered time, please select a new time from the list below:"-->
 
-<p><%= student_key %></p>
-<% for(var i=0; i<name_entries.length; i++) { %>
-    <p><%= name_entries[i]['First_Name']%> <%= name_entries[i]['Last_Name']%></p>
-<% } %>
+<!-- IF AN INVALID TIME IS SELECTED/URL IS WRONG
+"Sorry, the time you have selected is either unavailable, or does not exist. Please register for 
+a time from the list below:" -->
 
+
+<% time_info.forEach(slot => { %>
+    <p><%= formatDate(slot.Date_Available) + ', ' + formatTime(slot.Time) %></p>
+<% }); %>
+
+
+<h3>If you have questions regarding your meeting time, please contact your advisor.</h3>
 </body>
 </html>

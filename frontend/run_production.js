@@ -251,7 +251,7 @@ app.post('/update-meeting', (req, res) => {
 
 //Route to student registration dashboard, requires a unique key | NEEDS WORK!!!
 app.get('/student_main/:student_key', (req, res) => {
-  //Query returns the full name of the student who matches the input id.
+  //Query returns the full name of the student who matches the student key.
   const studentSqlQuery =
     `SELECT First_Name, Last_Name
     FROM Persons
@@ -264,6 +264,12 @@ app.get('/student_main/:student_key', (req, res) => {
     FROM Persons
     Where "Group" != "Professor" AND Unique_Key = "${req.params.student_key}"
     `
+  //Temp query for retrieving all the meeting times from the database.
+  const meetingTimesQuery =
+    `SELECT *
+    FROM RegistrationList
+    `
+  //Attempts to request information from the database.
   db.get(validateStudentQuery, (err, student_key) => {
     if (err) {
       console.log("Error accessing database.")
@@ -279,16 +285,27 @@ app.get('/student_main/:student_key', (req, res) => {
           return res.status(500).send('Error retrieving data from database');
         }
 
-        if (name_entries) { // If the query was successful...
-          console.log(name_entries);
-          res.render('student_view_main', { student_key: req.params.student_key, name_entries: name_entries });
-        } else {
-          res.render('invalid_key', { key: req.params.student_key });
-        }
+        //Attempts to request meeting time information from the database.
+        db.all(meetingTimesQuery, [], (err, time_info) => {
+          if (err) {
+            console.log("Error retrieving available meeting times => meetingTimesQuery.");
+            return res.status(500).send('Error retrieving available times');
+          }
 
+          if (name_entries && meetingTimesQuery) { // If the studentSqlQuery and meetingTimesQuery were successful...
+            console.log(name_entries);
+            res.render('student_view_main', { 
+              student_key: req.params.student_key,
+              name_entries: name_entries, 
+              time_info: time_info
+            });
+          } else {
+            res.render('invalid_key', { key: req.params.student_key });
+          }
+        });
       });
     } else {
-      console.log("Invalid key used on /student_dashboard.");
+      console.log("Invalid key used on /student_main => validateStudentQuery.");
       res.render('invalid_key', { key: req.params.student_key });
     }
   });
