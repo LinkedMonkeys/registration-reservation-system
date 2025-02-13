@@ -1,18 +1,16 @@
 function generateUniqueKey() {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; // Character set
-    let id = '';
-    for (let i = 0; i < 16; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length); // Get a random index
-      id += charset[randomIndex]; // Append the character
-    }
-    return id;
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; // Character set
+  let id = '';
+  for (let i = 0; i < 16; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length); // Get a random index
+    id += charset[randomIndex]; // Append the character
   }
+  return id;
+}
 
-  let result = generateUniqueKey()
-//   console.log(result + " : Student's Unique Key")
+let result = generateUniqueKey()
 
-
-  // Create a Set to store unique IDs
+// Create a Set to store unique IDs
 const generatedIDs = new Set();
 
 function generateUniqueKeysInASet() {
@@ -34,5 +32,4 @@ function generateUniqueKeysInASet() {
   return id;
 }
 
-let newResult = generateUniqueKeysInASet()
-console.log(newResult + " : Student's Unique Key from Set")
+module.exports = generateUniqueKeysInASet;

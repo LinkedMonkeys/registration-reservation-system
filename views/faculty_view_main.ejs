@@ -43,6 +43,11 @@
     <% } else { %>
         <p>No students found.</p>
     <% } %>
+    
+    <br>
+    <form action="/faculty_main/add_student/<%= fac_info.Unique_Key %>">
+        <input type="submit" value="Add New Student">
+    </form>
 
     <h2>Meeting Times</h2>
     <% if (time_info && time_info.length > 0) { %>

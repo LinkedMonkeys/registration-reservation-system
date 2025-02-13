@@ -6,6 +6,8 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
+// Require the 'generateUniqueKeysInASet' function from 'generateUniqueKeyFunction.js'
+const generateUniqueKeysInASetFunction = require('../functions/generateUniqueKeyFunction');
 
 //Is needed to use POST 
 app.use(express.urlencoded({ extended: true }));
@@ -167,6 +169,50 @@ app.post('/update-student', (req, res) => {
       }
     });
   }
+  res.redirect('/faculty_main/' + fac_key);
+});
+
+//Deletes student information
+app.post('/delete-student', (req, res) => {
+  const { student_key, fac_key } = req.body;
+
+  deleteStudent =
+    `DELETE FROM Persons
+    WHERE Unique_Key IS "${student_key}"
+  `;
+
+  db.run(deleteStudent, [], function (err) {
+    if (err) {
+      console.error('Error deleting student:', err.message);
+      return res.status(500).send('Error deleting student');
+    }
+  });
+  res.redirect('/faculty_main/' + fac_key);
+});
+
+//Route for adding students 
+app.get('/faculty_main/add_student/:fac_key', (req, res) => {
+  res.render('add_student', {
+    fac_key: req.params.fac_key,
+  });
+});
+
+
+//Adds student information
+app.post('/add-student', (req, res) => {
+  const { first_name, last_name, group, email, fac_key } = req.body;
+  //inserts student data, including a new unique key
+  addStudent =
+    `INSERT INTO Persons ("Group", "Last_Name", "First_Name", "Email", "Unique_Key", "Advisor")
+    VALUES("${group}", "${last_name}", "${first_name}", "${email}", "${generateUniqueKeysInASetFunction()}", "${fac_key}")
+  `;
+
+  db.run(addStudent, [], function (err) {
+    if (err) {
+      console.error('Error adding student:', err.message);
+      return res.status(500).send('Error adding student');
+    }
+  });
   res.redirect('/faculty_main/' + fac_key);
 });
 
