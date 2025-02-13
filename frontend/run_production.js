@@ -249,6 +249,48 @@ app.post('/update-meeting', (req, res) => {
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
+// Route for deleting table for new semester.
+app.get('/faculty_main/:professor_key/restart', (req, res) => {
+  const professorKey = req.params.professor_key;
+
+  const sqlQuery = `
+    SELECT First_Name, Last_Name
+    FROM Persons
+    WHERE Advisor = (
+      SELECT Person_ID S
+      FROM Persons
+      WHERE "Unique_Key" = "${professorKey}"
+    )`;
+
+  const deleteQuery = `DELETE FROM RegistrationList WHERE Professor_ID = "${professorKey}"`;
+
+  console.log(sqlQuery);
+  console.log(deleteQuery);
+
+  db.run(deleteQuery, [], (err) => {
+    if (err) {
+      return res.status(500).send('Error deleting data from database');
+    }
+
+    db.all(sqlQuery, [], (err, name_entries) => {
+      if (err) {
+        return res.status(500).send('Error retrieving data from database');
+      }
+
+      console.log(name_entries); 
+
+      res.render('faculty_view_main', { 
+        professor_key: professorKey, 
+        name_entries: name_entries[0]
+      });
+    });
+  });
+});
+
+
+
+
+
 //Route to student registration dashboard, requires a unique key | NEEDS WORK!!!
 app.get('/student_main/:student_key', (req, res) => {
   //Query returns the full name of the student who matches the student key.

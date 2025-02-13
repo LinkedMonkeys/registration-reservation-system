@@ -73,6 +73,64 @@
     <% } else { %>
         <p>No available meeting times found.</p>
     <% } %>
-</body>
+<!-- Restart Semester Button -->
+<button id="restartButton">Restart Semester</button>
 
+<!-- Confirmation message -->
+<div id="confirmationBox" style="display: none;">
+    <p>Are you sure you want to restart the semester?</p>
+    <button id="confirmYes">Yes</button>
+    <button id="confirmNo">No</button>
+</div>
+
+<p id="statusMessage"></p>
+
+
+S
+<% if (name_entries && name_entries.length > 0) { %>
+    <div>
+        <% name_entries.forEach(entry => { %>
+            <div>
+                <p><strong>Name:</strong> <%= entry.First_Name %> <%= entry.Last_Name %></p>
+                <form action="/faculty_main/edit_student/<%= entry.Person_ID %>" method="POST">
+                    <input type="submit" value="Edit">
+                </form>
+            </div>
+            <hr> 
+        <% }); %>
+    </div>
+<% } else { %>
+    <p>No students assigned.</p>
+<% } %>
+
+
+
+
+<!-- Js script stuff for the popup -->
+<script>
+    document.getElementById("restartButton").addEventListener("click", function() {
+        document.getElementById("confirmationBox").style.display = "block";
+    });
+
+    document.getElementById("confirmNo").addEventListener("click", function() {
+        document.getElementById("confirmationBox").style.display = "none";
+    });
+
+    document.getElementById("confirmYes").addEventListener("click", function() {
+        fetch('/faculty_main/<%= professor_key %>/restart', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("statusMessage").textContent = data.success ? "Semester restarted." : "Error restarting semester.";
+            document.getElementById("confirmationBox").style.display = "none";
+            location.reload();
+        })
+        .catch(() => {
+            document.getElementById("statusMessage").textContent = "Failed to connect to server.";
+        });
+    });
+</script>
+</body>
 </html>
+
+
+
