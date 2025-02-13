@@ -10,8 +10,8 @@
 <body>
     <h1>Editing <%= Student[0].First_Name+" "+Student[0].Last_Name%>.</h1>
     <form action="/update-student" method="POST">
-            <input type="hidden" name="student_id" value="<%= Student[0].Unique_Key %>">
-            <input type="hidden" name="fac_id" value="<%= Student[0].Advisor %>">
+            <input type="hidden" name="student_key" value="<%= Student[0].Unique_Key %>">
+            <input type="hidden" name="fac_key" value="<%= Student[0].Advisor %>">
             <table border=" 1">
                 <thead>
                     <tr>
