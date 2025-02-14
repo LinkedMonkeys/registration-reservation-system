@@ -58,7 +58,7 @@
                 </tbody>
             </table>
             </form>
-    <form action="/delete-student" method="POST">
+    <form action="/delete-student" method="POST" onsubmit="return confirm('Please press Ok to confirm this deletion. Press cancel if you no longer wish to delete this student.')"> 
         <input type="hidden" name="student_key" value="<%= Student[0].Unique_Key %>">
         <input type="hidden" name="fac_key" value="<%= Student[0].Advisor %>">
         <input type="submit" value="Delete Student">
