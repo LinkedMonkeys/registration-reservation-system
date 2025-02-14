@@ -1,40 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Meeting Times</title>
-</head>
-<body>
-  
-  <h1>Available Meeting Times</h1>
+<form action="/faculty_main/add_meeting_times_view/<%= professor_id %>" method="POST">
+  <label for="date_available">Date:</label>
+  <input type="date" id="date_available" name="date_available" required>
 
-  <% if (availableTimes && availableTimes.length > 0) { %>
-  <table border="1" style="width: 100%; border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Time</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% availableTimes.forEach(time => { %>
-      <tr>
-        <td><%= time.Date_Available %></td>
-        <td><%= time.Time %></td>
-        <td>
-          <a href="/edit_meeting_times.ejs"<%= time.Time %>>
-            <button>Edit</button>
-          </a>
-        </td>
-      </tr>
-      <% }); %>
-    </tbody>
-  </table>
-  <% } else { %>
-  <p>No available meeting times found.</p>
-  <% } %>
+  <label for="time">Time:</label>
+  <input type="time" id="time" name="time" required>
 
-</body>
-</html>
+  <input type="submit" value="Add Meeting Time">
+</form>
+

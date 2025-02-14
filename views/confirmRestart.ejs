@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restart Semester</title>
+</head>
+<body>
+
+    <button onclick="showModal()">Restart Semester</button>
+
+    <div id="overlay" style="display: none;"></div>
+
+    <div id="modal" style="display: none;">
+        <h2>Confirmation</h2>
+        <p><%= message %></p>
+        <button onclick="confirmRestart()">Yes</button>
+        <button onclick="closeModal()">No</button>
+    </div>
+
+    <script>
+        function showModal() {
+            document.getElementById("modal").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function confirmRestart() {
+            window.location.href = "/restart-semester";
+        }
+    </script>
+
+</body>
+</html>

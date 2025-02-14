@@ -11,7 +11,7 @@
     <h1>Viewing student advisees for <%= fac_info.First_Name + " " + fac_info.Last_Name %>.</h1>
 
     <h2>Student List</h2>
-    <% if (student_info && student_info.length > 0) { %>
+    <% if (student_info && student_info.length> 0) { %>
         <table border="1">
             <thead>
                 <tr>
@@ -22,35 +22,41 @@
                 </tr>
             </thead>
             <tbody>
-                <% student_info.forEach(student => { %>
+                <% student_info.forEach(student=> { %>
                     <tr>
-                    <!--<td>
+                        <!--<td>
                             <%// if (student.Last_Name != 'Available' && student.Last_Name != 'Not Available') { %>
                             <%=// student.First_Name + ' ' + student.Last_Name %>
                             <%// } %></td>-->
-                        <td><%= student.First_Name + ' ' + student.Last_Name %></td>
-                        <td><%= student.Group %></td>
-                        <td><%= student.Email %></td>
+                        <td>
+                            <%= student.First_Name + ' ' + student.Last_Name %>
+                        </td>
+                        <td>
+                            <%= student.Group %>
+                        </td>
+                        <td>
+                            <%= student.Email %>
+                        </td>
                         <td>
                             <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
                                 <input type="submit" value="Edit">
                             </form>
                         </td>
                     </tr>
-                <% }); %>
+                    <% }); %>
             </tbody>
         </table>
     <% } else { %>
-        <p>No students found.</p>
+    <p>No students found.</p>
     <% } %>
-    
+
     <br>
     <form action="/faculty_main/add_student/<%= fac_info.Unique_Key %>">
         <input type="submit" value="Add New Student">
     </form>
 
     <h2>Meeting Times</h2>
-    <% if (time_info && time_info.length > 0) { %>
+    <% if (time_info && time_info.length> 0) { %>
         <table border="1">
             <thead>
                 <tr>
@@ -61,23 +67,35 @@
                 </tr>
             </thead>
             <tbody>
-                <% time_info.forEach(slot => { %>
+                <% time_info.forEach(slot=> { %>
                     <tr>
-                        <td><%= slot.Date_Available %></td>
-                        <td><%= slot.Time %></td>
-                        <td><%= slot.First_Name + ' ' + slot.Last_Name %><td>
-                            <form action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
+                        <td>
+                            <%= slot.Date_Available %>
+                        </td>
+                        <td>
+                            <%= slot.Time %>
+                        </td>
+                        <td>
+                            <%= slot.First_Name + ' ' + slot.Last_Name %>
+                        <td>
+                            <form
+                                action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
                                 <input type="submit" value="Edit">
                             </form>
-                            
+
                         </td>
                     </tr>
-                <% }); %>
+                    <% }); %>
             </tbody>
         </table>
     <% } else { %>
-        <p>No available meeting times found.</p>
+    <p>No available meeting times found.</p>
     <% } %>
+
+    <br> <!-- Restart Semester Button -->
+    <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart" onsubmit="return confirm('Do you really want to submit the form?');">
+        <input type="submit" value="Restart Semester">
+    </form>
 </body>
 
 </html>
