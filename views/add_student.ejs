@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adding Student</title>
+</head>
+
+<body>
+    <h1>Adding new student advisee.</h1>
+    <form action="/add-student" method="POST">
+        <input type="hidden" name="fac_key" value="<%= fac_key %>">
+        <table border=" 1">
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Classification</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <label for="first_name">Student's first name:</label>
+                        <input type="text" name="first_name" size="10">
+                    </td>
+                    <td>
+                        <label for="last_name">Last name:</label>
+                        <input type="text" name="last_name" size="10">
+
+                    </td>
+                    <td>
+                        <label for="group">Student's classification:</label>
+                        <select id="group" name="group">
+                            <option value="" style="display:none"></option>
+                            <option value="Freshman">Freshman</option>
+                            <option value="Sophomore">Sophomore</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                        </select>
+                    </td>
+                    <td>
+                        <label for="email">Student's email:</label>
+                        <input type="text" name="email" size="16">
+                    </td>
+                    <td>
+                        <input type="submit" value="Add">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
