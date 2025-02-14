@@ -78,13 +78,14 @@ like to change your registered time, please select a new time from the list belo
 
 <% time_info.forEach(slot => { %>
     <% var availableDateAndTime = formatDate(slot.Date_Available) + ' @ ' + formatTime(slot.Time) %>
-    <% if (slot.Student_ID == 'Available_Key') { %>
+    <% if (slot.Student_ID == 'Available_Key' && slot.Group == name_entries[0].Group) { %>
     <p>
     <form action="/register-time" method="POST">
         <input type="hidden" name="advisor" value="<%= slot.Professor_ID %>">
         <input type="hidden" name="date" value="<%= slot.Date_Available %>">
         <input type="hidden" name="time" value="<%= slot.Time %>">
         <input type="hidden" name="student_key" value="<%= student_key %>">
+        <input type="hidden" name="group" value="<%= slot.Group %>">
 
         <button type="submit" onclick="alert('You just registered for <%= availableDateAndTime %>. You may now close this browser, or choose a new time.')"><%= availableDateAndTime %></button>
     </form>

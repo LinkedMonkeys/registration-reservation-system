@@ -319,7 +319,7 @@ app.get('/faculty_main/:fac_key/restart', (req, res) => {
 app.get('/student_main/:student_key', (req, res) => {
   //Query returns the full name of the student who matches the student key.
   const studentSqlQuery =
-    `SELECT First_Name, Last_Name
+    `SELECT *
     FROM Persons
     Where "Group" != "Professor" AND Unique_Key = "${req.params.student_key}"
     `
@@ -340,6 +340,17 @@ app.get('/student_main/:student_key', (req, res) => {
      FROM RegistrationList
      WHERE Student_ID = "${req.params.student_key}"
     `
+    const checkGroupEligibleQuery =
+    `SELECT Student_ID as sid
+     FROM RegistrationList
+     JOIN (SELECT Unique_Key as uk
+	         FROM Persons
+	         WHERE "Group" = (SELECT "Group"
+						                FROM Persons
+						                WHERE Unique_Key = "${req.params.student_key}"))
+   WHERE sid = uk;
+    `
+    console.log(checkGroupEligibleQuery);
   //Query checks to see if a given unique key has a registered time in
   //the database.
   const checkIfRequestedQuery =
@@ -387,13 +398,21 @@ app.get('/student_main/:student_key', (req, res) => {
                   console.log("Error retrieving available meeting times => checkIfRequestedQuery.");
                   return res.status(500).send('Error retrieving requested time.');
                 }
+                db.get(checkGroupEligibleQuery, (err, group_tag) => {
+                  console.log(group_tag);
+                  if (err) {
+                    console.log("Error finding group => checkGroupEligibleQuery.");
+                    return res.status(500).send('Error finding group.');
+                  }
                 res.render('student_view_main', {
                   student_key: req.params.student_key,
                   name_entries: name_entries,
                   time_info: time_info,
                   time_requested: time_requested,
-                  current_time: current_time
+                  current_time: current_time,
+                  group_tag: group_tag
                 });
+              });
               });
             } else {
               res.render('invalid_key', { key: req.params.student_key });
@@ -410,7 +429,7 @@ app.get('/student_main/:student_key', (req, res) => {
 
 // ONLY REGISTERS BASED ON student_id; NEEDS TO CHANGE WITH GROUPS (FRESHMAN, SENIOR, ETC.) IN MIND
 app.post('/register-time', (req, res) => {
-  const { advisor, date, time, student_key } = req.body;
+  const { advisor, date, time, student_key} = req.body;
   console.log(req.body);
   //Query updates the RegistrationList so the row's Student_ID is
   //changed to the given student_key.
@@ -434,7 +453,6 @@ app.post('/register-time', (req, res) => {
       console.error('Error finding existing meeting times.', err.message);
       return res.status(500).send('Error finding existing meeting times.');
     }
-
     db.run(registerQuery, [], function (err) {
       if (err) {
         console.error('Error registering for meeting time:', err.message);
