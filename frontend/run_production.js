@@ -7,6 +7,8 @@ const app = express();
 //Set up for .ejs
 app.set('view engine', 'ejs');
 
+// Require the 'generateUniqueKeysInASet' function from 'generateUniqueKeyFunction.js'
+const generateUniqueKeysInASetFunction = require('../functions/generateUniqueKeyFunction');
 
 //Set up for app.post
 app.use(express.urlencoded({ extended: true }));
@@ -190,6 +192,50 @@ app.post('/update-student', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
+//Deletes student information
+app.post('/delete-student', (req, res) => {
+  const { student_key, fac_key } = req.body;
+
+  deleteStudent =
+    `DELETE FROM Persons
+    WHERE Unique_Key IS "${student_key}"
+  `;
+
+  db.run(deleteStudent, [], function (err) {
+    if (err) {
+      console.error('Error deleting student:', err.message);
+      return res.status(500).send('Error deleting student');
+    }
+  });
+  res.redirect('/faculty_main/' + fac_key);
+});
+
+//Route for adding students 
+app.get('/faculty_main/add_student/:fac_key', (req, res) => {
+  res.render('add_student', {
+    fac_key: req.params.fac_key,
+  });
+});
+
+
+//Adds student information
+app.post('/add-student', (req, res) => {
+  const { first_name, last_name, group, email, fac_key } = req.body;
+  //inserts student data, including a new unique key
+  addStudent =
+    `INSERT INTO Persons ("Group", "Last_Name", "First_Name", "Email", "Unique_Key", "Advisor")
+    VALUES("${group}", "${last_name}", "${first_name}", "${email}", "${generateUniqueKeysInASetFunction()}", "${fac_key}")
+  `;
+
+  db.run(addStudent, [], function (err) {
+    if (err) {
+      console.error('Error adding student:', err.message);
+      return res.status(500).send('Error adding student');
+    }
+  });
+  res.redirect('/faculty_main/' + fac_key);
+});
+
 //Route for editing meeting times.
 app.get('/faculty_main/edit_meeting_time/:fac_key/:date/:time', (req, res) => {
   //Query gathers all information about the selected meeting time, where 
@@ -249,6 +295,26 @@ app.post('/update-meeting', (req, res) => {
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
+// Route for deleting table for new semester.
+app.get('/faculty_main/:fac_key/restart', (req, res) => {
+  const fac_key = req.params.fac_key;
+
+  const deleteQuery = `DELETE FROM RegistrationList WHERE Professor_ID = "${fac_key}"`;
+
+  console.log(deleteQuery);
+
+  db.run(deleteQuery, [], (err) => {
+    if (err) {
+      return res.status(500).send('Error deleting data from database');
+    }
+    res.redirect('/faculty_main/' + fac_key);
+  });
+});
+
+
+
+
+
 //Route to student registration dashboard, requires a unique key | NEEDS WORK!!!
 app.get('/student_main/:student_key', (req, res) => {
   //Query returns the full name of the student who matches the student key.
@@ -268,6 +334,18 @@ app.get('/student_main/:student_key', (req, res) => {
   const meetingTimesQuery =
     `SELECT *
     FROM RegistrationList
+    `
+  const currentMeetingQuery =
+    `SELECT *
+     FROM RegistrationList
+     WHERE Student_ID = "${req.params.student_key}"
+    `
+  //Query checks to see if a given unique key has a registered time in
+  //the database.
+  const checkIfRequestedQuery =
+    `SELECT *
+     FROM RegistrationList
+     WHERE Student_ID = "${req.params.student_key}"
     `
   //Attempts to request information from the database.
   db.get(validateStudentQuery, (err, student_key) => {
@@ -291,18 +369,37 @@ app.get('/student_main/:student_key', (req, res) => {
             console.log("Error retrieving available meeting times => meetingTimesQuery.");
             return res.status(500).send('Error retrieving available times');
           }
+          //Attempts to request meeting time information from the database.
+        db.all(currentMeetingQuery, [], (err, current_time) => {
+          console.log(current_time);
+          if (err) {
+            console.log("Error retrieving available meeting times => meetingTimesQuery.");
+            return res.status(500).send('Error retrieving available times');
+          }
 
-          if (name_entries && meetingTimesQuery) { // If the studentSqlQuery and meetingTimesQuery were successful...
+          if (name_entries && time_info) { // If the studentSqlQuery, meetingTimesQuery, and studentCurrentMeetingQuery were successful...
             console.log(name_entries);
-            res.render('student_view_main', { 
-              student_key: req.params.student_key,
-              name_entries: name_entries, 
-              time_info: time_info
+            // console.log(time_info);
+            //Attempts to request a row with a given key from the database.
+            db.get(checkIfRequestedQuery, (err, time_requested) => {
+              console.log('time_requested info: ' + time_requested);
+              if (err) {
+                console.log("Error retrieving available meeting times => checkIfRequestedQuery.");
+                return res.status(500).send('Error retrieving requested time.');
+              }
+              res.render('student_view_main', {
+                student_key: req.params.student_key,
+                name_entries: name_entries,
+                time_info: time_info,
+                time_requested: time_requested,
+                current_time: current_time
+              });
             });
           } else {
             res.render('invalid_key', { key: req.params.student_key });
           }
         });
+      });
       });
     } else {
       console.log("Invalid key used on /student_main => validateStudentQuery.");
@@ -311,6 +408,29 @@ app.get('/student_main/:student_key', (req, res) => {
   });
 });
 
+app.post('/register-time', (req, res) => {
+  const { advisor, date, time, student_key } = req.body;
+  console.log(req.body);
+  //Query updates the RegistrationList so the row's Student_ID is
+  //changed to the given student_key.
+  const registerQuery =
+    `UPDATE RegistrationList
+   SET Student_ID = "${student_key}"
+   WHERE Professor_ID = "${advisor}"
+   AND Date_Available = "${date}"
+   AND Time = "${time}"
+   AND Student_ID = 'Available_Key'
+  `
+  console.log(registerQuery);
+  db.run(registerQuery, [], function (err) {
+    if (err) {
+      console.error('Error registering for meeting time:', err.message);
+      return res.status(500).send('Error registering for meeting time.');
+    }
+  })
+  //When the updates are finished, the user is sent back to student_main.ejs view.
+  res.redirect(`/student_main/${student_key}`);
+});
 
 // Start the server on port 3000
 app.listen(3000, () => {

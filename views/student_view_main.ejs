@@ -41,6 +41,17 @@ function formatTime(time) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style>
+button {border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    color: #0000EE;
+    padding: 0;
+    text-decoration: underline;
+    font-family: inherit;
+    font-size: inherit;}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Student Dashboard</title>
@@ -48,22 +59,38 @@ function formatTime(time) {
 <body>
 
 <h1>Hello, <%= name_entries[0].First_Name + " " + name_entries[0].Last_Name %>.</h1>
-<h2>message</h2>
 <!-- A message needs to go here. check notes from board drawing. --> 
  <!-- IF STUDENT HAS NO TIME:
 "Please register for a time from the list below:" -->
+<% if (!time_requested) { %>
+    <h2>Please register for a time from the list below:</h2>
+<% } else { %>
 
 <!-- IF STUDENT HAS A REGISTERED TIME:
 "You are currently registered to meet with Dr. 'X' at 'Date, Time'. If you would
 like to change your registered time, please select a new time from the list below:"-->
 
-<!-- IF AN INVALID TIME IS SELECTED/URL IS WRONG
-"Sorry, the time you have selected is either unavailable, or does not exist. Please register for 
-a time from the list below:" -->
-
+<!-- Change the 'X' to shwo Professor's last name.  -->
+ <!-- Change the 'Date, Time' to show selected time.  -->
+    <h2>You are currently registered to meet with your advisor on <%= formatDate(current_time[0].Date_Available) %> @ <%= formatTime(current_time[0].Time) %>.</h2>
+    <h3>If you would like to change your registered time, please select a new time from the list below:</h3>
+<% } %>
 
 <% time_info.forEach(slot => { %>
-    <p><%= formatDate(slot.Date_Available) + ', ' + formatTime(slot.Time) %></p>
+    <% var availableDateAndTime = formatDate(slot.Date_Available) + ' @ ' + formatTime(slot.Time) %>
+    <% if (slot.Student_ID == 'Available_Key') { %>
+    <p>
+    <form action="/register-time" method="POST">
+        <input type="hidden" name="advisor" value="<%= slot.Professor_ID %>">
+        <input type="hidden" name="date" value="<%= slot.Date_Available %>">
+        <input type="hidden" name="time" value="<%= slot.Time %>">
+        <input type="hidden" name="student_key" value="<%= student_key %>">
+
+        <button type="submit" onclick="alert('You just registered for <%= availableDateAndTime %>. You may now close this browser, or choose a new time.')"><%= availableDateAndTime %></button>
+    </form>
+    </p>
+    
+    <% } %>
 <% }); %>
 
 
