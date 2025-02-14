@@ -7,6 +7,8 @@ const app = express();
 //Set up for .ejs
 app.set('view engine', 'ejs');
 
+// Require the 'generateUniqueKeysInASet' function from 'generateUniqueKeyFunction.js'
+const generateUniqueKeysInASetFunction = require('../functions/generateUniqueKeyFunction');
 
 //Set up for app.post
 app.use(express.urlencoded({ extended: true }));
@@ -190,6 +192,50 @@ app.post('/update-student', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
+//Deletes student information
+app.post('/delete-student', (req, res) => {
+  const { student_key, fac_key } = req.body;
+
+  deleteStudent =
+    `DELETE FROM Persons
+    WHERE Unique_Key IS "${student_key}"
+  `;
+
+  db.run(deleteStudent, [], function (err) {
+    if (err) {
+      console.error('Error deleting student:', err.message);
+      return res.status(500).send('Error deleting student');
+    }
+  });
+  res.redirect('/faculty_main/' + fac_key);
+});
+
+//Route for adding students 
+app.get('/faculty_main/add_student/:fac_key', (req, res) => {
+  res.render('add_student', {
+    fac_key: req.params.fac_key,
+  });
+});
+
+
+//Adds student information
+app.post('/add-student', (req, res) => {
+  const { first_name, last_name, group, email, fac_key } = req.body;
+  //inserts student data, including a new unique key
+  addStudent =
+    `INSERT INTO Persons ("Group", "Last_Name", "First_Name", "Email", "Unique_Key", "Advisor")
+    VALUES("${group}", "${last_name}", "${first_name}", "${email}", "${generateUniqueKeysInASetFunction()}", "${fac_key}")
+  `;
+
+  db.run(addStudent, [], function (err) {
+    if (err) {
+      console.error('Error adding student:', err.message);
+      return res.status(500).send('Error adding student');
+    }
+  });
+  res.redirect('/faculty_main/' + fac_key);
+});
+
 //Route for editing meeting times.
 app.get('/faculty_main/edit_meeting_time/:fac_key/:date/:time', (req, res) => {
   //Query gathers all information about the selected meeting time, where 
@@ -248,6 +294,26 @@ app.post('/update-meeting', (req, res) => {
   //When the updates are finished, the user is sent back to faculty_main.ejs view.
   res.redirect(`/faculty_main/${fac_key}`);
 });
+
+// Route for deleting table for new semester.
+app.get('/faculty_main/:fac_key/restart', (req, res) => {
+  const fac_key = req.params.fac_key;
+
+  const deleteQuery = `DELETE FROM RegistrationList WHERE Professor_ID = "${fac_key}"`;
+
+  console.log(deleteQuery);
+
+  db.run(deleteQuery, [], (err) => {
+    if (err) {
+      return res.status(500).send('Error deleting data from database');
+    }
+    res.redirect('/faculty_main/' + fac_key);
+  });
+});
+
+
+
+
 
 //Route to student registration dashboard, requires a unique key | NEEDS WORK!!!
 app.get('/student_main/:student_key', (req, res) => {
