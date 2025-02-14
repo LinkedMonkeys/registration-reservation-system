@@ -93,7 +93,7 @@
     <% } %>
 
     <br> <!-- Restart Semester Button -->
-    <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart" onsubmit="return confirm('Do you really want to submit the form?');">
+    <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart" onsubmit="return confirm('Please press Ok to confirm this deletion. Press cancel if you no longer wish to delete current times.');">
         <input type="submit" value="Restart Semester">
     </form>
 </body>
