@@ -295,6 +295,63 @@ app.post('/update-meeting', (req, res) => {
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
+app.get('/faculty_main/:fac_key/add_time', (req, res) => {
+  res.render('add_time', {
+    fac_key: req.params.fac_key,
+  });
+});
+
+app.post('/add-time', (req, res) => {
+  const { fac_key, date, group } = req.body;
+
+  addTime =
+    `INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") VALUES
+    ("${fac_key}", "${date}", "0800", "Available_Key", "${group}"),
+    ("${fac_key}", "${date}", "0830", "Available_Key", "${group}"),
+    ("${fac_key}", "${date}", "0900", "Available_Key", "${group}"),
+    ("${fac_key}", "${date}", "0930", "Available_Key", "${group}"),
+    ("${fac_key}", "${date}", "1000", "Available_Key", "${group}")
+  `;
+
+  var sql =
+    `INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") VALUES
+    `;
+
+  for (i = 1030; i < 1700; i += 30) {
+    addTime = addTime + `,("${fac_key}", "${date}", "${i}", "Available_Key", "${group}")
+    `
+    i = i + 70;
+    addTime = addTime + `,("${fac_key}", "${date}", "${i}", "Available_Key", "${group}")
+    `
+  };
+
+  addTime = addTime + `;`
+
+  console.log(sql);
+  console.log(addTime);
+
+
+  db.run(addTime, [], (err) => {
+    if (err) {
+      console.error('Error updating meeting time:', err.message);
+      return res.status(500).send('Error updating meeting time');
+    }
+  });
+  //When the updates are finished, the user is sent back to faculty_main.ejs view.
+  res.redirect(`/faculty_main/${fac_key}`);
+
+  // for (; time < 1730; time = time + 30) {
+  //   db.run(addTime, [], (err) => {
+  //     if (err) {
+  //       return res.status(500).send('Error adding data to the database');
+  //     }
+  //   });
+  //   console.log(addTime);
+  // };
+  // res.redirect('/faculty_main/' + fac_key);
+});
+
+
 // Route for deleting table for new semester.
 app.get('/faculty_main/:fac_key/restart', (req, res) => {
   const fac_key = req.params.fac_key;
@@ -340,7 +397,7 @@ app.get('/student_main/:student_key', (req, res) => {
      FROM RegistrationList
      WHERE Student_ID = "${req.params.student_key}"
     `
-    const checkGroupEligibleQuery =
+  const checkGroupEligibleQuery =
     `SELECT Student_ID as sid
      FROM RegistrationList
      JOIN (SELECT Unique_Key as uk
@@ -348,9 +405,9 @@ app.get('/student_main/:student_key', (req, res) => {
 	         WHERE "Group" = (SELECT "Group"
 						                FROM Persons
 						                WHERE Unique_Key = "${req.params.student_key}"))
-   WHERE sid = uk;
+     WHERE sid = uk;
     `
-    console.log(checkGroupEligibleQuery);
+  console.log(checkGroupEligibleQuery);
   //Query checks to see if a given unique key has a registered time in
   //the database.
   const checkIfRequestedQuery =
@@ -404,15 +461,15 @@ app.get('/student_main/:student_key', (req, res) => {
                     console.log("Error finding group => checkGroupEligibleQuery.");
                     return res.status(500).send('Error finding group.');
                   }
-                res.render('student_view_main', {
-                  student_key: req.params.student_key,
-                  name_entries: name_entries,
-                  time_info: time_info,
-                  time_requested: time_requested,
-                  current_time: current_time,
-                  group_tag: group_tag
+                  res.render('student_view_main', {
+                    student_key: req.params.student_key,
+                    name_entries: name_entries,
+                    time_info: time_info,
+                    time_requested: time_requested,
+                    current_time: current_time,
+                    group_tag: group_tag
+                  });
                 });
-              });
               });
             } else {
               res.render('invalid_key', { key: req.params.student_key });
@@ -429,7 +486,7 @@ app.get('/student_main/:student_key', (req, res) => {
 
 // ONLY REGISTERS BASED ON student_id; NEEDS TO CHANGE WITH GROUPS (FRESHMAN, SENIOR, ETC.) IN MIND
 app.post('/register-time', (req, res) => {
-  const { advisor, date, time, student_key} = req.body;
+  const { advisor, date, time, student_key } = req.body;
   console.log(req.body);
   //Query updates the RegistrationList so the row's Student_ID is
   //changed to the given student_key.

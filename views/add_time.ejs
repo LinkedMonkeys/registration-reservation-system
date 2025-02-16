@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editing Meeting Time</title>
+</head>
+
+<body>
+    <h1>Editing Meeting Time on </h1>
+    <form action="/add-time" method="POST">
+        <input type="hidden" name="fac_key" value="<%= fac_key %>">
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="group">Classification:</label>
+        <select id="group" name="group">
+            <option value="" style="display:none"></option>
+            <option value="Freshman">Freshman</option>
+            <option value="Sophomore">Sophomore</option>
+            <option value="Junior">Junior</option>
+            <option value="Senior">Senior</option>
+        </select>
+
+        <input type="submit" value="Save Changes">
+    </form>
+</body>
+
+</html>

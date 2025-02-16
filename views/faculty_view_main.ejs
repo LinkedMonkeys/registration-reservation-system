@@ -41,6 +41,9 @@
                             <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
                                 <input type="submit" value="Edit">
                             </form>
+                            <form action=>
+                                <input type="submit" value="Link">
+                            </form>
                         </td>
                     </tr>
                     <% }); %>
@@ -78,11 +81,9 @@
                         <td>
                             <%= slot.First_Name + ' ' + slot.Last_Name %>
                         <td>
-                            <form
-                                action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
+                            <form action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
                                 <input type="submit" value="Edit">
                             </form>
-
                         </td>
                     </tr>
                     <% }); %>
@@ -91,6 +92,10 @@
     <% } else { %>
     <p>No available meeting times found.</p>
     <% } %>
+    
+    <form action="/faculty_main/<%= fac_info.Unique_Key %>/add_time">
+        <input type="submit" value="Add Time">
+    </form>
 
     <br> <!-- Restart Semester Button -->
     <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart" onsubmit="return confirm('Please press Ok to confirm this deletion. Press cancel if you no longer wish to delete current times.');">
