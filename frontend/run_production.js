@@ -484,7 +484,6 @@ app.get('/student_main/:student_key', (req, res) => {
   });
 });
 
-// ONLY REGISTERS BASED ON student_id; NEEDS TO CHANGE WITH GROUPS (FRESHMAN, SENIOR, ETC.) IN MIND
 app.post('/register-time', (req, res) => {
   const { advisor, date, time, student_key } = req.body;
   console.log(req.body);
