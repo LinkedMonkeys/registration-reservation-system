@@ -22,7 +22,7 @@ Linked here is the [Presentation SlideShow](https://docs.google.com/presentation
 
 # Images folder
 Images used on the slideshow, or creating during the capstone process are stored in
-this [Images](https://github.com/TSonGit/capstone-registration-system-repo/tree/main/images/Capstone%20Images) folder. Some images and/or icons were souced from [storyset.com](https://storyset.com/online).
+this [Images](https://github.com/TSonGit/capstone-registration-system-repo/tree/main/images/Capstone%20Images) folder. Some images and/or icons were sourced from [storyset.com](https://storyset.com/online).
 
 # Find the Collaborators on LinkedIn
 Project Manager:
