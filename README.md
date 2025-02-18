@@ -13,6 +13,13 @@ After cloning the repo, there are some prerequisites that must be installed.
 
 # To run
 
-To run, from the root of the project, run `node frontend/db.js`.  It will start
+To run, from the root of the project, run `node frontend/run_production.js`.  It will start
 the node webserver on port 3000, by default.  At this point, a browser should be
 able to connect with [http://localhost:3000/](http://localhost:3000/).
+
+# Link to Slideshow
+Linked here is the [Presentation_SlideShow](https://docs.google.com/presentation/d/1Qg_DJJo0jO1nH51D9YN4_5Ac8eKq8Ic_d7lh0bTSTfg/edit?usp=sharing).
+
+# Images folder
+Images used on the slideshow, or creating during the capstone process are stored in
+this [Images](link) folder. Some images and/or icons were souced from [storyset.com](https://storyset.com/online).

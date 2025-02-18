@@ -192,6 +192,31 @@ app.post('/update-student', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
+//Needs its view added to faculty_main. Check the faculty.ejs form.
+
+app.get('/faculty_main/links_view/:fac_key', (req,res) =>{
+  //Query validates a fac_key to determine whether it is a real key belonging
+  //to a professor in the database.
+  const validateFacultyQuery =
+    `SELECT *
+    FROM Persons
+    WHERE Unique_Key = "${req.params.fac_key}" AND "Group" = "Professor"
+    `
+  db.get(validateFacultyQuery, (err, fac_info) => {
+    if (err) {
+      console.log("Error accessing database => validateFacultyQuery.")
+      return res.status(500).send('Error retrieving data from database');
+    }
+    if (fac_info) {
+      res.render('links_view');
+      // fac_info: fac_info;
+    } else {
+      //If connnection to the database was unsuccessful, send the user to the invalid screen.
+      res.render('invalid_key', { key: req.params.fac_key });
+    }
+  });
+});
+
 //Deletes student information
 app.post('/delete-student', (req, res) => {
   const { student_key, fac_key } = req.body;
