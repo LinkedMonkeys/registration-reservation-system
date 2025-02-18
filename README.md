@@ -21,7 +21,7 @@ able to connect with [http://localhost:3000/](http://localhost:3000/).
 Linked here is the [Presentation SlideShow](https://docs.google.com/presentation/d/1Qg_DJJo0jO1nH51D9YN4_5Ac8eKq8Ic_d7lh0bTSTfg/edit?usp=sharing).
 
 # Images folder
-Images used on the slideshow, or creating during the capstone process are stored in
+Images used on the slideshow, or created during the capstone process are stored in
 this [Images](https://github.com/TSonGit/capstone-registration-system-repo/tree/main/images/Capstone%20Images) folder. Some images and/or icons were sourced from [storyset.com](https://storyset.com/online).
 
 # Find the Collaborators on LinkedIn
