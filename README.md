@@ -1,9 +1,9 @@
-# capstone-registration-system-repo
-This repository will be the collective work of the senior computer science developers from Ouachita Baptist University. The objective of this project is to produce a new registration platform for signup meetings between professor and student, as opposed to paper documentation.
+# Registration reservation system
+This project is the collective work of the senior Computer Science developers from Ouachita Baptist University. The objective of this project is to produce a registration reservation platform for meetings between professor and student, as opposed to signing up on paper.
 
 # Environment Setup
 
-After cloning the repo, there are some prerequisites that must be installed.
+After cloning the repo, some prerequisites that must be installed.
 1. Install [node.js](https://nodejs.org/en/download/package-manager).
 2. Install [SQLite](https://www.sqlite.org/download.html)
 3. Install several node package dependencies
@@ -29,8 +29,8 @@ Project Manager:
 [Dr. Jeff Matocha](https://www.linkedin.com/in/jeffmatocha/)
 
 Student Developers:
-1. [Thomas Short](https://www.linkedin.com/in/thomas-short-42380423b/)
-2. [Kristopher Garcia](https://www.linkedin.com/in/kristopher-garcia-8215b924b/)
-3. [Corbin Bostian](https://www.linkedin.com/in/corbin-bostian-62b512232/)
-4. [Micah Terry](https://www.linkedin.com/in/micah-terry-00582524a/)
-5. [Samuel Spraggins](https://www.linkedin.com/in/samuel-spraggins-679192233/)
+1. [Thomas Short](https://www.linkedin.com/in/thomas-short-42380423b/) ('25)
+2. [Kristopher Garcia](https://www.linkedin.com/in/kristopher-garcia-8215b924b/) ('25)
+4. [Corbin Bostian](https://www.linkedin.com/in/corbin-bostian-62b512232/) ('25)
+5. [Micah Terry](https://www.linkedin.com/in/micah-terry-00582524a/) ('25)
+6. [Samuel Spraggins](https://www.linkedin.com/in/samuel-spraggins-679192233/) ('25)
