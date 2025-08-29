@@ -9,7 +9,7 @@ app.set('view engine', 'ejs');
 
 
 //path to database file
-const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
+const dbPath = './database/Production/registration-sample-DB-Production.db';
 
 
 //helps us know if the database will open or not 

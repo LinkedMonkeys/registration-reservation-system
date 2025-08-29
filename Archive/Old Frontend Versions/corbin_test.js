@@ -9,7 +9,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
 // Path to connect to the database
-const dbPath = './DBeaver/Production/registration-sample-DB-Production.db';
+const dbPath = './database/Production/registration-sample-DB-Production.db';
 
 // Open the database
 const db = new sqlite3.Database(dbPath, (err) => {
