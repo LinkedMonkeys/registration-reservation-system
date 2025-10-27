@@ -242,7 +242,6 @@ app.get('/faculty_main/add_student/:fac_key', (req, res) => {
   });
 });
 
-
 //Adds student information
 app.post('/add-student', (req, res) => {
   const { first_name, last_name, group, email, fac_key } = req.body;
@@ -320,62 +319,124 @@ app.post('/update-meeting', (req, res) => {
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
+// Route for adding time slots
 app.get('/faculty_main/:fac_key/add_time', (req, res) => {
   res.render('add_time', {
     fac_key: req.params.fac_key,
   });
 });
 
+// Add individual specific time slot
+app.post('/add-specific-time', (req, res) => {
+  const { fac_key, date, time, group } = req.body;
+
+  // Validate inputs
+  if (!fac_key || !date || !time || !group) {
+    return res.status(400).send('All fields are required');
+  }
+
+  const addSpecificTimeQuery = `
+    INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") 
+    VALUES ("${fac_key}", "${date}", "${time}", "Available_Key", "${group}")
+  `;
+
+  console.log('Adding specific time slot:', { fac_key, date, time, group });
+  console.log('SQL Query:', addSpecificTimeQuery);
+
+  db.run(addSpecificTimeQuery, [], (err) => {
+    if (err) {
+      console.error('Error adding specific meeting time:', err.message);
+      return res.status(500).send('Error adding specific meeting time');
+    }
+    console.log('Successfully added specific time slot');
+    res.redirect(`/faculty_main/${fac_key}`);
+  });
+});
+
+// Bulk delete selected time slots
+app.post('/delete-times', (req, res) => {
+  const { fac_key, time_slots } = req.body;
+
+  // Handle case where no checkboxes are selected
+  if (!time_slots || time_slots.length === 0) {
+    return res.redirect(`/faculty_main/${fac_key}`);
+  }
+
+  // Ensure time_slots is always an array (single checkbox returns a string)
+  const slotsArray = Array.isArray(time_slots) ? time_slots : [time_slots];
+
+  // Parse each time slot (format: "date|time")
+  const deleteConditions = slotsArray.map(slot => {
+    const [date, time] = slot.split('|');
+    return `(Date_Available = "${date}" AND Time = "${time}")`;
+  }).join(' OR ');
+
+  const deleteQuery = `
+    DELETE FROM RegistrationList 
+    WHERE Professor_ID = "${fac_key}" 
+    AND (${deleteConditions})
+  `;
+
+  console.log('Deleting time slots:', slotsArray);
+  console.log('SQL Query:', deleteQuery);
+
+  db.run(deleteQuery, [], (err) => {
+    if (err) {
+      console.error('Error deleting time slots:', err.message);
+      return res.status(500).send('Error deleting time slots');
+    }
+    console.log('Successfully deleted', slotsArray.length, 'time slot(s)');
+    res.redirect(`/faculty_main/${fac_key}`);
+  });
+});
+
+// Add bulk time slots for a date
 app.post('/add-time', (req, res) => {
   const { fac_key, date, group } = req.body;
 
-  addTime =
-    `INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") VALUES
-    ("${fac_key}", "${date}", "0800", "Available_Key", "${group}"),
-    ("${fac_key}", "${date}", "0830", "Available_Key", "${group}"),
-    ("${fac_key}", "${date}", "0900", "Available_Key", "${group}"),
-    ("${fac_key}", "${date}", "0930", "Available_Key", "${group}"),
-    ("${fac_key}", "${date}", "1000", "Available_Key", "${group}")
+  // Helper function to generate time slots
+  function generateTimeSlots(startHour, endHour, intervalMinutes = 30) {
+    const slots = [];
+    
+    for (let hour = startHour; hour <= endHour; hour++) {
+      for (let minute = 0; minute < 60; minute += intervalMinutes) {
+        if (hour === endHour && minute > 0) break;
+        // Format as 4-digit military time
+        const timeStr = hour.toString().padStart(2, '0') + minute.toString().padStart(2, '0');
+        slots.push(timeStr);
+      }
+    }
+    
+    return slots;
+  }
+
+  // Generate time slots from 8:00 AM to 5:00 PM (30-minute intervals)
+  const timeSlots = generateTimeSlots(8, 17, 30);
+
+  // Build the VALUES part of the SQL query
+  const values = timeSlots.map(time => 
+    `("${fac_key}", "${date}", "${time}", "Available_Key", "${group}")`
+  ).join(',\n    ');
+
+  // Create the complete SQL query
+  const addTimeQuery = `
+    INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") 
+    VALUES ${values}
   `;
 
-  var sql =
-    `INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") VALUES
-    `;
+  console.log('Generated time slots:', timeSlots);
+  console.log('SQL Query:', addTimeQuery);
 
-  for (i = 1030; i < 1700; i += 30) {
-    addTime = addTime + `,("${fac_key}", "${date}", "${i}", "Available_Key", "${group}")
-    `
-    i = i + 70;
-    addTime = addTime + `,("${fac_key}", "${date}", "${i}", "Available_Key", "${group}")
-    `
-  };
-
-  addTime = addTime + `;`
-
-  console.log(sql);
-  console.log(addTime);
-
-
-  db.run(addTime, [], (err) => {
+  // Execute the query
+  db.run(addTimeQuery, [], (err) => {
     if (err) {
-      console.error('Error updating meeting time:', err.message);
-      return res.status(500).send('Error updating meeting time');
+      console.error('Error adding meeting times:', err.message);
+      return res.status(500).send('Error adding meeting times');
     }
+    console.log('Successfully added', timeSlots.length, 'time slots');
+    res.redirect(`/faculty_main/${fac_key}`);
   });
-  //When the updates are finished, the user is sent back to faculty_main.ejs view.
-  res.redirect(`/faculty_main/${fac_key}`);
-
-  // for (; time < 1730; time = time + 30) {
-  //   db.run(addTime, [], (err) => {
-  //     if (err) {
-  //       return res.status(500).send('Error adding data to the database');
-  //     }
-  //   });
-  //   console.log(addTime);
-  // };
-  // res.redirect('/faculty_main/' + fac_key);
 });
-
 
 // Route for deleting table for new semester.
 app.get('/faculty_main/:fac_key/restart', (req, res) => {
@@ -392,10 +453,6 @@ app.get('/faculty_main/:fac_key/restart', (req, res) => {
     res.redirect('/faculty_main/' + fac_key);
   });
 });
-
-
-
-
 
 //Route to student registration dashboard, requires a unique key | NEEDS WORK!!!
 app.get('/student_main/:student_key', (req, res) => {
@@ -549,3 +606,4 @@ app.post('/register-time', (req, res) => {
 app.listen(3000, () => {
   console.log('Server is running on http://localhost:3000');
 });
+

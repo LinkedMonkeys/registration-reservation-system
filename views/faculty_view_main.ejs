@@ -24,10 +24,6 @@
             <tbody>
                 <% student_info.forEach(student=> { %>
                     <tr>
-                        <!--<td>
-                            <%// if (student.Last_Name != 'Available' && student.Last_Name != 'Not Available') { %>
-                            <%=// student.First_Name + ' ' + student.Last_Name %>
-                            <%// } %></td>-->
                         <td>
                             <%= student.First_Name + ' ' + student.Last_Name %>
                         </td>
@@ -60,39 +56,50 @@
 
     <h2>Meeting Times</h2>
     <% if (time_info && time_info.length> 0) { %>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Registration Slots</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% time_info.forEach(slot=> { %>
+        <form action="/delete-times" method="POST" onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
+            <input type="hidden" name="fac_key" value="<%= fac_info.Unique_Key %>">
+            <table border="1">
+                <thead>
                     <tr>
-                        <td>
-                            <%= slot.Date_Available %>
-                        </td>
-                        <td>
-                            <%= slot.Time %>
-                        </td>
-                        <td>
-                            <%= slot.First_Name + ' ' + slot.Last_Name %>
-                        <td>
-                            <form action="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
-                                <input type="submit" value="Edit">
-                            </form>
-                        </td>
+                        <th>Select</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Registration Slots</th>
+                        <th>Action</th>
                     </tr>
-                    <% }); %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% time_info.forEach(slot=> { %>
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="time_slots" value="<%= slot.Date_Available %>|<%= slot.Time %>">
+                            </td>
+                            <td>
+                                <%= slot.Date_Available %>
+                            </td>
+                            <td>
+                                <%= slot.Time %>
+                            </td>
+                            <td>
+                                <%= slot.First_Name + ' ' + slot.Last_Name %>
+                            </td>
+                            <td>
+                                <a href="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
+                                    <input type="button" value="Edit">
+                                </a>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+            <br>
+            <input type="submit" value="Delete Selected Times">
+        </form>
     <% } else { %>
     <p>No available meeting times found.</p>
     <% } %>
     
+    <br>
     <form action="/faculty_main/<%= fac_info.Unique_Key %>/add_time">
         <input type="submit" value="Add Time">
     </form>
