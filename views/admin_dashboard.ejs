@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <h1>Welcome <%= admin_info.First_Name + " " + admin_info.Last_Name %>.</h1>
+
+  <h2>Administrative Tools</h2>
+
+  <form action="/admin/<%= admin_info.Unique_Key %>/manage_professors">
+    <input type="submit" value="Manage Professors">
+  </form>
+
+  <form action="/admin/<%= admin_info.Unique_Key %>/all_meetings">
+    <input type="submit" value="View All Meetings">
+  </form>
+
+</body>
+</html>

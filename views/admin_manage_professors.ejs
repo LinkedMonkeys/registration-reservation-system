@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Professors</title>
+</head>
+<body>
+  <h1>Manage Professors</h1>
+
+  <% if (professors && professors.length > 0) { %>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Unique Key</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% professors.forEach(prof => { %>
+      <tr>
+        <td><%= prof.First_Name + " " + prof.Last_Name %></td>
+        <td><%= prof.Email %></td>
+        <td><%= prof.Unique_Key %></td>
+        <td>
+          <form action="/delete-professor" method="POST" onsubmit="return confirm('Delete this professor?');">
+            <input type="hidden" name="prof_key" value="<%= prof.Unique_Key %>">
+            <input type="hidden" name="admin_key" value="<%= admin_info.Unique_Key %>">
+            <input type="submit" value="Delete">
+          </form>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <p>No professors found.</p>
+  <% } %>
+
+  <h2>Add New Professor</h2>
+  <form action="/add-professor" method="POST">
+    <input type="hidden" name="admin_key" value="<%= admin_info.Unique_Key %>">
+    <label>First Name:</label>
+    <input type="text" name="first_name" required>
+    <label>Last Name:</label>
+    <input type="text" name="last_name" required>
+    <label>Email:</label>
+    <input type="text" name="email" required>
+    <input type="submit" value="Add Professor">
+  </form>
+
+  <br>
+  <form action="/admin/<%= admin_info.Unique_Key %>">
+    <input type="submit" value="Return to Dashboard">
+  </form>
+</body>
+</html>

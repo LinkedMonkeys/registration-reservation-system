@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Meetings Overview</title>
+</head>
+<body>
+  <h1>All Scheduled Meetings</h1>
+
+  <% if (meetings && meetings.length > 0) { %>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Professor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Student ID</th>
+        <th>Group</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% meetings.forEach(m => { %>
+      <tr>
+        <td><%= m.First_Name + " " + m.Last_Name %></td>
+        <td><%= m.Date_Available %></td>
+        <td><%= m.Time %></td>
+        <td><%= m.Student_ID %></td>
+        <td><%= m.Group %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <% } else { %>
+  <p>No meetings scheduled.</p>
+  <% } %>
+
+  <br>
+  <form action="/admin/<%= admin_info.Unique_Key %>">  
+    <input type="submit" value="Return to Dashboard">
+  </form>
+</body>
+</html>
