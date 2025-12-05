@@ -26,8 +26,6 @@ function GetTable(tblName) {
 
 // Gets all items from a table with a specified where clause
 function FilterGetTable(tblName, field, value) {
-	// TODO: I need a way to check the fields validity i.e. 
-	// a representation of the tables fields (JSON??)
 	const rows = `
 		SELECT * 
 		FROM ${tblName}

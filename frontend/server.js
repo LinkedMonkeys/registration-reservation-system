@@ -7,7 +7,7 @@ const app = express();
 
 // Set up for .ejs
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '..', 'views'));  // 👈 Updated path here!
+app.set('views', path.join(__dirname, '..', 'views'));  
 app.use(express.urlencoded({ extended: true }));
 
 // Route imports

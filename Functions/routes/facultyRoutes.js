@@ -23,6 +23,7 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 		const {Group, Last_Name, First_Name, Email, Unique_Key, Advisor} = req.body;
 		const newFields = {Group, Last_Name, First_Name, Email, Unique_Key, Advisor};
 
+
 		// existing field values
 		const oldFields = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.UNIQUE_KEY, req.params.student_key);
 
@@ -31,8 +32,10 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 		for (const key in newFields) {
 			const incoming = newFields[key];
 
-			if (incoming != oldFields[key]) {
-				updatedFields[key] = incoming;
+			if (incoming != '') {
+				if (incoming != oldFields[key]) {
+					updatedFields[key] = incoming;
+				}
 			}
 		}
 
@@ -40,7 +43,7 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 			//update db function: id key, field name, field value
 			await dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
 		}
-		res.send('Update Success')
+		res.redirect(`/faculty/${req.params.fac_key}/edit`);
 		
 	} catch (err) {
 		console.log(`Error with EditStudent Function: ${err}`)

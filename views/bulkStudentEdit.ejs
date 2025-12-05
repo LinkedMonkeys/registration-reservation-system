@@ -8,29 +8,37 @@
 <body>
 	<table>
 		<thead>
-			<th>First Name</th>
-			<th>Last Name</th>
-			<th>Classification</th>
-			<th>Email</th>
+			<th size="10">First Name</th>
+			<th size="10">Last Name</th>
+			<th size="10">Classification</th>
+			<th size="10">Email</th>
 		</thead>
 		<tbody>
 				<% Student.forEach((student) => { %>
 			<tr>
 				<td>
-						<form class="formRow" action="/faculty/<%= Fac_key %>/edit/<%= student.Unique_Key %>">
-						<input class="editField" type="text" name="first_name" value="<%= student.First_Name %>" size="10">
-						<input class="editfield" type="text" name="last_name" value="<%= student.Last_Name %>" size="10">
+						<input form="form-<%= student.Unique_Key %>" class="editfield"
+							type="text" name="First_Name" value="<%= student.First_Name %>" size="10">
 
-						<select class="editField" id="group" name="group">
+						<input form="form-<%= student.Unique_Key %>" class="editfield"
+							type="text" name="Last_Name" value="<%= student.Last_Name %>" size="10">
+
+						<select form="form-<%= student.Unique_Key %>" class="editfield" id="group" name="Group">
 							<option value=""><%= student.Group %></option>
-							<option value="Freshman">Freshman</option>
-							<option value="Sophomore">Sophomore</option>
-							<option value="Junior">Junior</option>
-							<option value="Senior">Senior</option>
+							<option value="freshman">freshman</option>
+							<option value="sophomore">sophomore</option>
+							<option value="junior">junior</option>
+							<option value="senior">senior</option>
 						</select>
-						<input class="editField" type="text" name="email" value="<%= student.Email %>" size="16">
-						<input type="hidden" name="Unique_key" value="<%= student.Unique_Key %>">
-					</form>
+						<input form="form-<%= student.Unique_Key %>" class="editfield"
+							type="text" name="Email" value="<%= student.Email %>" size="16">
+						<input form="form-<%= student.Unique_Key %>" 
+								type="hidden"
+								name="Unique_Key" 
+								value="<%= student.Unique_Key %>">
+
+						<form method="POST" id="form-<%= student.Unique_Key %>" class="formRow"
+							action="/faculty/<%= Fac_key %>/edit/<%= student.Unique_Key %>"></form>
 				</td>
 			</tr>
 			<% }) %>

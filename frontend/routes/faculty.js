@@ -208,7 +208,6 @@ router.get('/:fac_key/restart', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
-<<<<<<< HEAD
 // Route to faculty dashboard
 router.get('/:fac_key', async (req, res) => {
 	try {
@@ -240,7 +239,7 @@ router.get('/:fac_key', async (req, res) => {
 		}
 
 });
-=======
+
 // SEND EMAIL — Show form
 router.get('/send_email/:student_key', (req, res) => {
   const studentQuery = `
@@ -265,5 +264,4 @@ router.post('/send_email', (req, res) => {
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
->>>>>>> f55836c9b484cf81655a485a0fd4dd68bf9250b4
 module.exports = router;

@@ -1,5 +1,5 @@
 console.log('js starting');
-const FormField = document.querySelectorAll('.editField');
+const FormField = document.querySelectorAll('.editfield');
 FormField.forEach((form) => {
 	form.addEventListener("focusout",postUpdatedField);
 	console.log('added listener');
@@ -12,13 +12,14 @@ async function postUpdatedField(e) {
 	try {
 		// clear Timer
 		console.log('focusout');
+		console.log(document.getElementsByName("Email")[1].value);
 		clearTimeout(timer);
 
 		// timer logic 2 seconds
 		timer = setTimeout(() => {
 			
-			console.log('test submist');
-			//e.target.form.submit();
+			//console.log('test submist');
+			e.target.form.submit();
 		}, 5000);
 	} catch (err) {
 		console.log(err)
