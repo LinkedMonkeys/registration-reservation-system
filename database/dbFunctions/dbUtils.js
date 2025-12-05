@@ -1,6 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const dbPath = './database/Production/registration-sample-DB-Production.db';
-
+const {Table, Columns, Tables} = require('./dbSructure')
  const Db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
@@ -55,6 +55,17 @@ function GetPersonByGroup(trgtKey, trgtGroup) {
 	});
 } 
 
+function GetPersonByID(id) {
+	const rows = `SELECT * FROM Persons p WHERE p.Unique_Key = ?`;
+
+	return new Promise((resolve, reject) =>
+	{
+		Db.all(rows, [id], (err, rows) => {
+			if (err) reject(`Error with DB query: ${err}`)
+			else resolve(rows);
+		});
+	});
+}
 
 // SELECT * FROM RegistrationList rl 
 // JOIN PERSONS p ON rl.Student_ID 
@@ -71,6 +82,17 @@ function GetTimesByProfesor(profID) {
 			else resolve(rows)
 		});
 	});
+};
+
+function UpdateStudent(studentID, field, value) {
+	const rows = `UPDATE ${Tables.PERSONS} SET ${field} = ? WHERE ${Columns.PERSONS.UNIQUE_KEY} = ?`
+
+	return new Promise((resolve, reject) => {
+		Db.all(rows, [value, studentID], (err, rows) => {
+			if (err) reject(`Error with DB query: ${err}`)
+			else resolve(rows);
+		});
+	});
 }
 
 module.exports = {
@@ -78,4 +100,6 @@ module.exports = {
 	GetPersonByGroup,
 	FilterGetTable,
 	GetTimesByProfesor,
+	GetPersonByID,
+	UpdateStudent,
 }

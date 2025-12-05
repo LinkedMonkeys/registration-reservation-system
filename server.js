@@ -5,15 +5,13 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.set('views', './Views');
+
 app.use(express.urlencoded({ extended: true}));
+app.use(express.json());
 
-const routes = require('./Functions/routes/routes.js')
+const facultyRoutes = require('./Functions/routes/facultyRoutes.js');
 
-// faculty dashboard for editing students and seeing timeslots
-app.get('/faculty/:fac_key', routes.FacultyDashBoard);
-
-
-app.get('/faculty/edit/:student_key', routes.EditStudent);
+app.use('/faculty', facultyRoutes)
 
 app.listen(port, () => {
 	console.log(`website running at http://localhost:${port}/`)

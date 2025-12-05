@@ -5,50 +5,16 @@ const sqlite3 = require('sqlite3').verbose();
 const generateUniqueKeysInASetFunction = require('../../Functions/GenerateUniqueKeyFunction');
 
 
-const dbPath = '../database/Production/registration-sample-DB-Production.db';
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Error opening database:', err.message);
-  else console.log('Connected to the SQLite database (faculty).');
-});
+	const dbPath = './database/Production/registration-sample-DB-Production.db';
+	const db = new sqlite3.Database(dbPath, (err) => {
+		  if (err) console.error('Error opening database:', err.message);
+		  else console.log('Connected to the SQLite database (faculty).');
+		});
 
-// Route to faculty dashboard
-router.get('/:fac_key', (req, res) => {
-  const studentInfoSqlQuery = `
-    SELECT * FROM Persons WHERE Advisor = "${req.params.fac_key}"
-  `;
-  const timeInfoQuery = `
-    SELECT * FROM RegistrationList rl 
-    JOIN (SELECT * FROM Persons) as p
-    WHERE rl.Professor_ID == "${req.params.fac_key}" AND rl.Student_ID = p.Unique_Key;
-  `;
-  const validateFacultyQuery = `
-    SELECT * FROM Persons
-    WHERE Unique_Key = "${req.params.fac_key}" AND "Group" = "Professor"
-  `;
 
-  db.get(validateFacultyQuery, (err, fac_info) => {
-    if (err) return res.status(500).send('Error retrieving data from database');
-    if (fac_info) {
-      db.all(studentInfoSqlQuery, [], (err, student_info) => {
-        if (err) return res.status(500).send('Error retrieving data from database');
-        db.all(timeInfoQuery, [], (err, time_info) => {
-          if (err) return res.status(500).send('Error retrieving times');
-          if (student_info && time_info) {
-            res.render('faculty_view_main', {
-              fac_info,
-              student_info,
-              time_info,
-            });
-          } else {
-            res.render('invalid_key', { key: req.params.fac_key });
-          }
-        });
-      });
-    } else {
-      res.render('invalid_key', { key: req.params.fac_key });
-    }
-  });
-});
+const dbUtils = require('../../database/dbFunctions/dbUtils.js');
+const {Tables, Columns} = require('../../database/dbFunctions/dbSructure.js');
+
 
 // Edit student route
 router.get('/edit_student/:student_key', (req, res) => {
@@ -62,21 +28,52 @@ router.get('/edit_student/:student_key', (req, res) => {
 });
 
 // Update student info
-router.post('/update-student', (req, res) => {
-  const { student_key, first_name, last_name, group, email, fac_key } = req.body;
-  const updates = [];
+//router.post('/update-student', (req, res) => {
+//  const { student_key, first_name, last_name, group, email, fac_key } = req.body;
+//  const updates = [];
+//
+//  if (first_name)
+//    updates.push(`UPDATE Persons SET First_Name="${first_name}" WHERE Unique_Key="${student_key}"`);
+//  if (last_name)
+//    updates.push(`UPDATE Persons SET Last_Name="${last_name}" WHERE Unique_Key="${student_key}"`);
+//  if (group)
+//    updates.push(`UPDATE Persons SET "Group"="${group}" WHERE Unique_Key="${student_key}"`);
+//  if (email)
+//    updates.push(`UPDATE Persons SET Email="${email}" WHERE Unique_Key="${student_key}"`);
+//
+//  updates.forEach((q) => db.run(q));
+//  res.redirect('/faculty_main/' + fac_key);
+//});
 
-  if (first_name)
-    updates.push(`UPDATE Persons SET First_Name="${first_name}" WHERE Unique_Key="${student_key}"`);
-  if (last_name)
-    updates.push(`UPDATE Persons SET Last_Name="${last_name}" WHERE Unique_Key="${student_key}"`);
-  if (group)
-    updates.push(`UPDATE Persons SET "Group"="${group}" WHERE Unique_Key="${student_key}"`);
-  if (email)
-    updates.push(`UPDATE Persons SET Email="${email}" WHERE Unique_Key="${student_key}"`);
+//Update student info 
+router.post('/:fac_key/edit/:student_key', async (req, res) => {
+	try {
+		// new field values from user
+		const {Group, Last_Name, First_Name, Email, Unique_Key, Advisor} = req.body;
+		const newFields = {Group, Last_Name, First_Name, Email, Unique_Key, Advisor};
 
-  updates.forEach((q) => db.run(q));
-  res.redirect('/faculty_main/' + fac_key);
+		// existing field values
+		const oldFields = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.UNIQUE_KEY, req.params.student_key);
+
+		const updatedFields = {};
+
+		for (const key in newFields) {
+			const incoming = newFields[key];
+
+			if (incoming != oldFields[key]) {
+				updatedFields[key] = incoming;
+			}
+		}
+
+		for (const key in updatedFields) {
+			//update db function: id key, field name, field value
+			await dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
+		}
+		res.send('Update Success')
+		
+	} catch (err) {
+		console.log(`Error with EditStudent Function: ${err}`)
+	}
 });
 
 // Links view
@@ -217,4 +214,35 @@ router.get('/:fac_key/restart', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
+// Route to faculty dashboard
+router.get('/:fac_key', async (req, res) => {
+	try {
+		//query to validate faculty key
+		const facultyKeyValidate = await dbUtils.GetPersonByGroup(
+			req.params.fac_key, 'Professor'
+		);
+
+		// if facultyKeyValidate returns nothing or has no match
+		if (!facultyKeyValidate || facultyKeyValidate.length === 0) {
+			return res.status(401).send('Invalid Faculty Key');
+		}
+
+		//query to get students info for associated fac_key
+		const studentInfoRows = await dbUtils.GetTable(Tables.PERSONS);
+
+		// query to get registration times for the associated fac_key
+		const registrationTimes = await dbUtils.GetTimesByProfesor(req.params.fac_key);
+
+		res.render('faculty_view_main', {
+              //Values to pass into the .ejs.
+              fac_info: facultyKeyValidate,
+              student_info: studentInfoRows,
+              time_info: registrationTimes
+            });
+		} catch (err) {
+			console.log(`error retreiving data for faculty view: ${err}`)
+			res.status(404).send(`${err}`)
+		}
+
+});
 module.exports = router;
