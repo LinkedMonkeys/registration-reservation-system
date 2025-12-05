@@ -7,7 +7,7 @@ const app = express();
 
 // Set up for .ejs
 app.set('view engine', 'ejs');
-app.set('views', '../views');
+app.set('views', path.join(__dirname, '..', 'views'));  // 👈 Updated path here!
 app.use(express.urlencoded({ extended: true }));
 
 // Route imports
@@ -19,6 +19,12 @@ const adminRoutes = require('./routes/admin');
 app.use('/faculty_main', facultyRoutes);
 app.use('/student_main', studentRoutes);
 app.use('/admin', adminRoutes);
+
+// Simple logger
+app.use((req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+});
 
 // Default route
 app.get('/', (req, res) => {

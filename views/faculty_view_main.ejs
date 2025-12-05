@@ -37,9 +37,11 @@
                             <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
                                 <input type="submit" value="Edit">
                             </form>
-                            <form action="/faculty_main/links_view/<%= fac_info.Unique_Key %>">
-                                <input type="submit" value="Link">
+                            
+                            <form action="/faculty_main/send_email/<%= student.Unique_Key %>">
+                                <input type="submit" value="Email Student">
                             </form>
+                            
                         </td>
                     </tr>
                     <% }); %>
@@ -56,7 +58,7 @@
 
     <h2>Meeting Times</h2>
     <% if (time_info && time_info.length> 0) { %>
-        <form action="/delete-times" method="POST" onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
+        <form action="/faculty_main/delete-times" method="POST" onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
             <input type="hidden" name="fac_key" value="<%= fac_info.Unique_Key %>">
             <table border="1">
                 <thead>

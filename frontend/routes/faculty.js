@@ -2,15 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 const generateUniqueKeysInASetFunction = require('../../Functions/GenerateUniqueKeyFunction');
-
-
-	const dbPath = './database/Production/registration-sample-DB-Production.db';
-	const db = new sqlite3.Database(dbPath, (err) => {
-		  if (err) console.error('Error opening database:', err.message);
-		  else console.log('Connected to the SQLite database (faculty).');
-		});
-
 
 const dbUtils = require('../../database/dbFunctions/dbUtils.js');
 const {Tables, Columns} = require('../../database/dbFunctions/dbSructure.js');
@@ -180,6 +173,7 @@ router.post('/delete-times', (req, res) => {
 
 // Add time slots (bulk)
 router.post('/add-time', (req, res) => {
+  console.log('Adding time slots:');
   const { fac_key, date, group } = req.body;
 
   function generateTimeSlots(startHour, endHour, intervalMinutes = 30) {
@@ -214,6 +208,7 @@ router.get('/:fac_key/restart', (req, res) => {
   res.redirect('/faculty_main/' + fac_key);
 });
 
+<<<<<<< HEAD
 // Route to faculty dashboard
 router.get('/:fac_key', async (req, res) => {
 	try {
@@ -245,4 +240,30 @@ router.get('/:fac_key', async (req, res) => {
 		}
 
 });
+=======
+// SEND EMAIL — Show form
+router.get('/send_email/:student_key', (req, res) => {
+  const studentQuery = `
+    SELECT * FROM Persons WHERE Unique_Key="${req.params.student_key}"
+  `;
+  db.get(studentQuery, [], (err, student) => {
+    if (err || !student) return res.render('invalid_key', { key: req.params.student_key });
+    res.render('send_email', { student });
+  });
+});
+
+// SEND EMAIL — Handle submission (for now, console log)
+router.post('/send_email', (req, res) => {
+  const { email, subject, message, fac_key } = req.body;
+
+  console.log("\n--- EMAIL SENT (Test) ---");
+  console.log("To:", email);
+  console.log("Subject:", subject);
+  console.log("Message:\n", message);
+  console.log("------------------------------\n");
+
+  res.redirect(`/faculty_main/${fac_key}`);
+});
+
+>>>>>>> f55836c9b484cf81655a485a0fd4dd68bf9250b4
 module.exports = router;

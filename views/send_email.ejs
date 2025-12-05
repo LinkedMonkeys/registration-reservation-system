@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Student</title>
+</head>
+<body>
+
+<h1>Send Registration Link to <%= student.First_Name %> <%= student.Last_Name %></h1>
+
+<form action="/faculty_main/send_email" method="POST">
+  <input type="hidden" name="student_key" value="<%= student.Unique_Key %>">
+  <input type="hidden" name="fac_key" value="<%= student.Advisor %>">
+
+  <label>To:</label>
+  <input type="email" name="email" value="<%= student.Email %>" required><br><br>
+
+  <label>Subject:</label>
+  <input type="text" name="subject" value="Your Registration Meeting Link" required><br><br>
+
+  <label>Message:</label><br>
+  <textarea name="message" rows="12" cols="60">
+Hello <%= student.First_Name %>,
+
+Please complete your meeting registration using the secure link below:
+
+Registration Link:
+http://localhost:3000/student_main/<%= student.Unique_Key %>
+
+Your Access Code:
+<%= student.Unique_Key %>
+
+If you have any questions, please contact your advisor.
+
+Thank you!
+  </textarea>
+  <br><br>
+
+  <button type="submit">Send Email</button>
+</form>
+
+</body>
+</html>
+
