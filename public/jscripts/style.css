@@ -1,0 +1,72 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    background-color: #f9f9f9;
+    overflow-x: hidden;
+    padding-bottom: 1em;
+}
+
+/* Header Styling */
+header {
+    background-color: #532987;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Main Content */
+main {
+    padding: 2rem;
+}
+
+/* Buttons */
+input[type="submit"], input[type="button"], button {
+    background-color: #532987;
+    color: #fff;
+    border-radius: 0.25em;
+    padding: .5em;
+}
+
+/* Footer Styling */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Table Styling */
+table{
+    border-collapse: collapse;
+    margin: 1em;
+}
+
+/*Table row colors*/
+th, td{
+    border: 1px solid #ccc;
+    padding: 0.5em 1em;
+    text-align: left;
+}
+
+/*space out buttons*/
+.action-buttons{
+    display: flex;
+    gap: 0.5em;
+}
+button, input[type="button"]{
+    cursor: pointer;
+    /* need to make button click effect */
+}

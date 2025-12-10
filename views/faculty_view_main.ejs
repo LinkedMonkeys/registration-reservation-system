@@ -1,115 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="/jscripts/style.css">
+<link rel="stylesheet" href="/jscripts/faculty_view_main.css">
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard</title>
+    <header>
+        <h1>Viewing student advisees for <%= fac_info.First_Name + " " + fac_info.Last_Name %>.</h1>
+    </header>
 </head>
 
 <body>
-    <h1>Viewing student advisees for <%= fac_info.First_Name + " " + fac_info.Last_Name %>.</h1>
-
-    <h2>Student List</h2>
-    <% if (student_info && student_info.length> 0) { %>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Classification</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% student_info.forEach(student=> { %>
-                    <tr>
-                        <td>
-                            <%= student.First_Name + ' ' + student.Last_Name %>
-                        </td>
-                        <td>
-                            <%= student.Group %>
-                        </td>
-                        <td>
-                            <%= student.Email %>
-                        </td>
-                        <td>
-                            <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
-                                <input type="submit" value="Edit">
-                            </form>
-                            
-                            <form action="/faculty_main/send_email/<%= student.Unique_Key %>">
-                                <input type="submit" value="Email Student">
-                            </form>
-                            
-                        </td>
-                    </tr>
-                    <% }); %>
-            </tbody>
-        </table>
-    <% } else { %>
-    <p>No students found.</p>
-    <% } %>
-
-    <br>
-    <form action="/faculty_main/add_student/<%= fac_info.Unique_Key %>">
-        <input type="submit" value="Add New Student">
-    </form>
-
-    <h2>Meeting Times</h2>
-    <% if (time_info && time_info.length> 0) { %>
-        <form action="/faculty_main/delete-times" method="POST" onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
-            <input type="hidden" name="fac_key" value="<%= fac_info.Unique_Key %>">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Select</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Registration Slots</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% time_info.forEach(slot=> { %>
+    <div id="Body_Items">
+        <div class="StudentList">
+            <h2>Student List</h2>
+            <% if (student_info && student_info.length> 0) { %>
+                <table border="1">
+                    <thead>
                         <tr>
-                            <td>
-                                <input type="checkbox" name="time_slots" value="<%= slot.Date_Available %>|<%= slot.Time %>">
-                            </td>
-                            <td>
-                                <%= slot.Date_Available %>
-                            </td>
-                            <td>
-                                <%= slot.Time %>
-                            </td>
-                            <td>
-                                <%= slot.First_Name + ' ' + slot.Last_Name %>
-                            </td>
-                            <td>
-                                <a href="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
-                                    <input type="button" value="Edit">
-                                </a>
-                            </td>
+                            <th>Name</th>
+                            <th>Classification</th>
+                            <th>Email</th>
+                            <th>Action</th>
                         </tr>
-                        <% }); %>
-                </tbody>
-            </table>
-            <br>
-            <input type="submit" value="Delete Selected Times">
-        </form>
-    <% } else { %>
-    <p>No available meeting times found.</p>
-    <% } %>
-    
-    <br>
-    <form action="/faculty_main/<%= fac_info.Unique_Key %>/add_time">
-        <input type="submit" value="Add Time">
-    </form>
+                    </thead>
+                    <tbody>
+                        <% student_info.forEach(student=> { %>
+                            <tr>
+                                <td>
+                                    <%= student.First_Name + ' ' + student.Last_Name %>
+                                </td>
+                                <td>
+                                    <%= student.Group %>
+                                </td>
+                                <td>
+                                    <%= student.Email %>
+                                </td>
+                                <td class="action-buttons">
+                                    <form action="/faculty_main/edit_student/<%= student.Unique_Key %>">
+                                        <input type="submit" value="Edit">
+                                    </form>
 
-    <br> <!-- Restart Semester Button -->
-    <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart" onsubmit="return confirm('Please press Ok to confirm this deletion. Press cancel if you no longer wish to delete current times.');">
-        <input type="submit" value="Restart Semester">
-    </form>
+                                    <form action="/faculty_main/send_email/<%= student.Unique_Key %>">
+                                        <input type="submit" value="Email Student">
+                                    </form>
+
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                    <p>No students found.</p>
+                    <% } %>
+                        <form action="/faculty_main/add_student/<%= fac_info.Unique_Key %>" id="ActionButtons">
+                            <input type="submit" value="Add New Student">
+                        </form>
+        </div>
+
+        <div class="MeetingTimes">
+            <h2>Meeting Times</h2>
+            <% if (time_info && time_info.length> 0) { %>
+                <form action="/faculty_main/delete-times" method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
+                    <input type="hidden" name="fac_key" value="<%= fac_info.Unique_Key %>">
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Registration Slots</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% time_info.forEach(slot=> { %>
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="time_slots"
+                                            value="<%= slot.Date_Available %>|<%= slot.Time %>">
+                                    </td>
+                                    <td>
+                                        <%= slot.Date_Available %>
+                                    </td>
+                                    <td>
+                                        <%= slot.Time %>
+                                    </td>
+                                    <td>
+                                        <%= slot.First_Name + ' ' + slot.Last_Name %>
+                                    </td>
+                                    <td>
+                                        <a
+                                            href="/faculty_main/edit_meeting_time/<%= slot.Professor_ID %>/<%= slot.Date_Available %>/<%= slot.Time %>">
+                                            <input type="button" value="Edit Time">
+                                        </a>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+                    <br>
+                    <input type="submit" value="Delete Selected Times" id ="ActionButtons">
+                </form>
+                <% } else { %>
+                    <p>No available meeting times found.</p>
+                    <% } %>
+
+                        <br>
+                        <form action="/faculty_main/<%= fac_info.Unique_Key %>/add_time">
+                            <input type="submit" value="Add Time" id="ActionButtons">
+                        </form>
+
+                        <br> <!-- Reset Semester Button -->
+                        <form action="/faculty_main/<%= fac_info.Unique_Key %>/restart"
+                            onsubmit="return confirm('Please press Ok to confirm this deletion. Press cancel if you no longer wish to delete current times.');">
+                            <input type="submit" value="Reset Semester" id="ActionButtons">
+                        </form>
+        </div>
+    </div>
 </body>
 
 </html>

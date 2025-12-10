@@ -1,0 +1,33 @@
+/* Faculty View Main CSS */
+#Body_Items{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+/* Headings Styling */
+h2{
+    margin: 1em;
+    margin-bottom: 0em;
+}
+
+/* Table Styling */
+table{
+    border-collapse: collapse;
+    margin-top: 0em;
+}
+
+/* Alternate table row colors */
+tbody tr:nth-child(odd) {
+    background-color: #977eb74a;
+}
+
+/* Alternate table row colors */
+tbody tr:nth-child(even) {
+    background-color: #ffffff;
+}
+
+#ActionButtons{
+    margin-left: 1em;
+    gap: 0.5em;
+}
