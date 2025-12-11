@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const dbPath = './database/Production/registration-sample-DB-Production.db';
-const {Table, Columns, Tables} = require('./dbSructure')
- const Db = new sqlite3.Database(dbPath, (err) => {
+const {Columns, Tables} = require('./dbSructure')
+ const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {
     console.error('Error opening database:', err.message);
   } else {
@@ -17,7 +17,7 @@ function GetTable(tblName) {
 			      FROM ${tblName};`
 
 	return new Promise((resolve, reject) => {
-		Db.all(rows, [], (err, rows) => {
+		db.all(rows, [], (err, rows) => {
 			if (err) reject(`Error with database query: ${err}`);
 			else resolve(rows);
 		});
@@ -32,7 +32,7 @@ function FilterGetTable(tblName, field, value) {
 		WHERE ${field} = ?
 `
 	return new Promise((resolve, reject) => {
-		Db.all(rows, [value], (err, rows) => {
+		db.all(rows, [value], (err, rows) => {
 			if (err) reject(`Error with DB query: ${err}`);
 			else resolve(rows);
 		});
@@ -46,7 +46,7 @@ function GetPersonByGroup(trgtKey, trgtGroup) {
 				   WHERE p.Unique_key = ? AND p."Group" = ?`;
 
 	return new Promise((resolve, reject) => {
-		Db.all(rows, [trgtKey, trgtGroup], (err, rows) => {
+		db.all(rows, [trgtKey, trgtGroup], (err, rows) => {
 			if (err) reject(`Error with DB Query: ${err}`)
 			else resolve(rows)
 		});
@@ -58,7 +58,7 @@ function GetPersonByID(id) {
 
 	return new Promise((resolve, reject) =>
 	{
-		Db.all(rows, [id], (err, rows) => {
+		db.all(rows, [id], (err, rows) => {
 			if (err) reject(`Error with DB query: ${err}`)
 			else resolve(rows);
 		});
@@ -74,8 +74,8 @@ function GetTimesByProfesor(profID) {
 	 JOIN PERSONS p ON rl.Student_ID = p.Unique_Key 
 	 WHERE rl.Professor_ID = ?;`
 
-	return new Promise((resolve, reject) => {
-		Db.all(rows, [profID], (err, rows) =>{
+ 	return new Promise((resolve, reject) => {
+		db.all(rows, [profID], (err, rows) =>{
 			if (err) reject(`Error with DB Query: ${err}`)
 			else resolve(rows)
 		});
@@ -86,7 +86,7 @@ function UpdateStudent(studentID, field, value) {
 	const rows = `UPDATE ${Tables.PERSONS} SET ${field} = ? WHERE ${Columns.PERSONS.UNIQUE_KEY} = ?`
 
 	return new Promise((resolve, reject) => {
-		Db.all(rows, [value, studentID], (err, rows) => {
+		db.all(rows, [value, studentID], (err, rows) => {
 			if (err) reject(`Error with DB query: ${err}`)
 			else resolve(rows);
 		});
@@ -94,6 +94,7 @@ function UpdateStudent(studentID, field, value) {
 }
 
 module.exports = {
+	db,
 	GetTable,
 	GetPersonByGroup,
 	FilterGetTable,

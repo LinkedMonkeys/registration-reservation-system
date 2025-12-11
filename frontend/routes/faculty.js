@@ -52,7 +52,7 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 
 		for (const key in updatedFields) {
 			//update db function: id key, field name, field value
-			await dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
+			await dbUtils.dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
 		}
 		res.redirect(`/faculty_main/${req.params.fac_key}/edit`);
 		
@@ -68,7 +68,7 @@ router.get('/links_view/:fac_key', (req, res) => {
     SELECT * FROM Persons
     WHERE Unique_Key = "${req.params.fac_key}" AND "Group" = "Professor"
   `;
-  db.get(validateFacultyQuery, (err, fac_info) => {
+  dbUtils.db.get(validateFacultyQuery, (err, fac_info) => {
     if (err) return res.status(500).send('Error retrieving data');
     if (fac_info) res.render('links_view');
     else res.render('invalid_key', { key: req.params.fac_key });
@@ -81,7 +81,7 @@ router.post('/delete-student', (req, res) => {
   const deleteStudent = `
     DELETE FROM Persons WHERE Unique_Key IS "${student_key}"
   `;
-  db.run(deleteStudent);
+  dbUtils.db.run(deleteStudent);
   res.redirect('/faculty_main/' + fac_key);
 });
 
@@ -97,7 +97,7 @@ router.post('/add-student', (req, res) => {
     INSERT INTO Persons ("Group", "Last_Name", "First_Name", "Email", "Unique_Key", "Advisor")
     VALUES("${group}", "${last_name}", "${first_name}", "${email}", "${generateUniqueKeysInASetFunction()}", "${fac_key}")
   `;
-  db.run(addStudent);
+  dbUtils.db.run(addStudent);
   res.redirect('/faculty_main/' + fac_key);
 });
 
@@ -109,7 +109,7 @@ router.get('/edit_meeting_time/:fac_key/:date/:time', (req, res) => {
     AND Date_Available IS "${req.params.date}" 
     AND Time IS "${req.params.time}"
   `;
-  db.all(meetingQuery, [], (err, meeting) => {
+  dbUtils.db.all(meetingQuery, [], (err, meeting) => {
     if (err) return res.status(500).send('Error retrieving meeting');
     if (meeting.length === 0) return res.status(404).send('Meeting time not found');
     res.render('edit_meeting_time', { Meeting: meeting });
@@ -142,7 +142,7 @@ router.post('/add-specific-time', (req, res) => {
     INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") 
     VALUES ("${fac_key}", "${date}", "${time}", "Available_Key", "${group}")
   `;
-  db.run(addSpecificTimeQuery);
+  dbUtils.db.run(addSpecificTimeQuery);
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
@@ -189,7 +189,7 @@ router.post('/add-time', (req, res) => {
     INSERT INTO RegistrationList ("Professor_ID", "Date_Available", "Time", "Student_ID", "Group") 
     VALUES ${values}
   `;
-  db.run(addTimeQuery);
+  dbUtils.db.run(addTimeQuery);
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
@@ -197,7 +197,7 @@ router.post('/add-time', (req, res) => {
 router.get('/:fac_key/restart', (req, res) => {
   const fac_key = req.params.fac_key;
   const deleteQuery = `DELETE FROM RegistrationList WHERE Professor_ID="${fac_key}"`;
-  db.run(deleteQuery);
+  dbUtils.db.run(deleteQuery);
   res.redirect('/faculty_main/' + fac_key);
 });
 
@@ -240,7 +240,7 @@ router.get('/send_email/:student_key', (req, res) => {
   const studentQuery = `
     SELECT * FROM Persons WHERE Unique_Key="${req.params.student_key}"
   `;
-  db.get(studentQuery, [], (err, student) => {
+  dbUtils.db.get(studentQuery, [], (err, student) => {
     if (err || !student) return res.render('invalid_key', { key: req.params.student_key });
     res.render('send_email', { student });
   });
