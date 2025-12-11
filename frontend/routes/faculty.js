@@ -215,7 +215,8 @@ router.get('/:fac_key', async (req, res) => {
 		}
 
 		//query to get students info for associated fac_key
-		const studentInfoRows = await dbUtils.GetTable(Tables.PERSONS);
+		console.log(Tables.PERSONS.Unique_Key);
+		const studentInfoRows = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.ADVISOR, req.params.fac_key);
 
 		// query to get registration times for the associated fac_key
 		const registrationTimes = await dbUtils.GetTimesByProfesor(req.params.fac_key);
