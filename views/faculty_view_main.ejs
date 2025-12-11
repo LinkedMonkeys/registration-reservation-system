@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard</title>
     <header>
-        <h1>Viewing student advisees for <%= fac_info.First_Name + " " + fac_info.Last_Name %>.</h1>
+			<h1>Viewing student advisees for <%= fac_info.Group%> <%= fac_info.Last_Name %>.</h1>
     </header>
 </head>
 
@@ -56,7 +56,7 @@
                 <% } else { %>
                     <p>No students found.</p>
                     <% } %>
-                        <form action="/faculty_main/add_student/<%= fac_info.Unique_Key %>" id="ActionButtons">
+                        <form action="/faculty_main/add_student/<%= fac_key %>" id="ActionButtons">
                             <input type="submit" value="Add New Student">
                         </form>
         </div>
@@ -111,7 +111,7 @@
                     <% } %>
 
                         <br>
-                        <form action="/faculty_main/<%= fac_info.Unique_Key %>/add_time">
+                        <form action="/faculty_main/<%= fac_key %>/add_time">
                             <input type="submit" value="Add Time" id="ActionButtons">
                         </form>
 

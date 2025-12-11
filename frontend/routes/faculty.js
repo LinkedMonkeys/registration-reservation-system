@@ -205,9 +205,7 @@ router.get('/:fac_key/restart', (req, res) => {
 router.get('/:fac_key', async (req, res) => {
 	try {
 		//query to validate faculty key
-		const facultyKeyValidate = await dbUtils.GetPersonByGroup(
-			req.params.fac_key, 'Professor'
-		);
+		const facultyKeyValidate = await dbUtils.GetPersonByGroup(req.params.fac_key, Columns.PERSONS.GROUP);
 
 		// if facultyKeyValidate returns nothing or has no match
 		if (!facultyKeyValidate || facultyKeyValidate.length === 0) {
@@ -215,11 +213,13 @@ router.get('/:fac_key', async (req, res) => {
 		}
 
 		//query to get students info for associated fac_key
-		console.log(Tables.PERSONS.Unique_Key);
 		const studentInfoRows = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.ADVISOR, req.params.fac_key);
 
 		// query to get registration times for the associated fac_key
 		const registrationTimes = await dbUtils.GetTimesByProfesor(req.params.fac_key);
+
+		console.log(facultyKeyValidate);
+
 
 		res.render('faculty_view_main', {
               //Values to pass into the .ejs.
