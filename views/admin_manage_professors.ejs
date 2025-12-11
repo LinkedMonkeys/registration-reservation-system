@@ -25,7 +25,7 @@
         <td><%= prof.Email %></td>
         <td><%= prof.Unique_Key %></td>
         <td>
-          <form action="/delete-professor" method="POST" onsubmit="return confirm('Delete this professor?');">
+          <form action="/admin/delete-professor" method="POST" onsubmit="return confirm('Delete this professor?');">
             <input type="hidden" name="prof_key" value="<%= prof.Unique_Key %>">
             <input type="hidden" name="admin_key" value="<%= admin_info.Unique_Key %>">
             <input type="submit" value="Delete">
@@ -40,8 +40,8 @@
   <% } %>
 
   <h2>Add New Professor</h2>
-  <form action="/add-professor" method="POST">
-    <input type="hidden" name="admin_key" value="<%= admin_info.Unique_Key %>">
+  <form action="/admin/add-professor" method="POST">
+    <input type="hidden" name="admin_key" value="<%= admin_key %>">
     <label>First Name:</label>
     <input type="text" name="first_name" required>
     <label>Last Name:</label>
