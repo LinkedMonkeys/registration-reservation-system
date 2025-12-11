@@ -26,10 +26,19 @@ router.get('/:student_key', (req, res) => {
   const validateStudentQuery = `
     SELECT Unique_Key FROM Persons WHERE "Group" != "Professor" AND Unique_Key="${req.params.student_key}"
   `;
-  const meetingTimesQuery = `SELECT * FROM RegistrationList`;
+  const meetingTimesQuery = `
+  SELECT *
+  FROM RegistrationList
+  WHERE Professor_ID = (SELECT Advisor FROM Persons WHERE Unique_Key = "${req.params.student_key}")
+`;
+
+
   const currentMeetingQuery = `
     SELECT * FROM RegistrationList WHERE Student_ID="${req.params.student_key}"
   `;
+
+  console.log("Query:", meetingTimesQuery);
+
   const checkIfRequestedQuery = `
     SELECT * FROM RegistrationList WHERE Student_ID="${req.params.student_key}"
   `;
