@@ -10,33 +10,22 @@ const {Tables, Columns} = require('../../database/dbFunctions/dbSructure.js');
 
 
 // Edit student route
-router.get('/edit_student/:student_key', (req, res) => {
-  const studentQuery = `
-    SELECT * FROM Persons WHERE Unique_Key IS "${req.params.student_key}"
-  `;
-  db.all(studentQuery, [], (err, student) => {
-    if (err) return res.status(500).send('Error retrieving student');
-    res.render('edit_student', { Student: student });
-  });
+router.get('/:fac_key/edit', async (req, res) => {
+	try {
+		const studentInfoRows = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.ADVISOR, req.params.fac_key);
+
+		res.render('bulkStudentEdit', {
+			Student: studentInfoRows,
+			Fac_key: req.params.fac_key
+		});
+					
+		
+
+	} catch (err) {
+		console.log(`Error with the /fac/key/edit end point ${err}`);
+	}
 });
 
-// Update student info
-//router.post('/update-student', (req, res) => {
-//  const { student_key, first_name, last_name, group, email, fac_key } = req.body;
-//  const updates = [];
-//
-//  if (first_name)
-//    updates.push(`UPDATE Persons SET First_Name="${first_name}" WHERE Unique_Key="${student_key}"`);
-//  if (last_name)
-//    updates.push(`UPDATE Persons SET Last_Name="${last_name}" WHERE Unique_Key="${student_key}"`);
-//  if (group)
-//    updates.push(`UPDATE Persons SET "Group"="${group}" WHERE Unique_Key="${student_key}"`);
-//  if (email)
-//    updates.push(`UPDATE Persons SET Email="${email}" WHERE Unique_Key="${student_key}"`);
-//
-//  updates.forEach((q) => db.run(q));
-//  res.redirect('/faculty_main/' + fac_key);
-//});
 
 //Update student info 
 router.post('/:fac_key/edit/:student_key', async (req, res) => {
@@ -44,6 +33,7 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 		// new field values from user
 		const {Group, Last_Name, First_Name, Email, Unique_Key, Advisor} = req.body;
 		const newFields = {Group, Last_Name, First_Name, Email, Unique_Key, Advisor};
+
 
 		// existing field values
 		const oldFields = await dbUtils.FilterGetTable(Tables.PERSONS, Columns.PERSONS.UNIQUE_KEY, req.params.student_key);
@@ -53,8 +43,10 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 		for (const key in newFields) {
 			const incoming = newFields[key];
 
-			if (incoming != oldFields[key]) {
-				updatedFields[key] = incoming;
+			if (incoming != '') {
+				if (incoming != oldFields[key]) {
+					updatedFields[key] = incoming;
+				}
 			}
 		}
 
@@ -62,12 +54,13 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 			//update db function: id key, field name, field value
 			await dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
 		}
-		res.send('Update Success')
+		res.redirect(`/faculty_main/${req.params.fac_key}/edit`);
 		
 	} catch (err) {
 		console.log(`Error with EditStudent Function: ${err}`)
 	}
 });
+
 
 // Links view
 router.get('/links_view/:fac_key', (req, res) => {
@@ -229,6 +222,7 @@ router.get('/:fac_key', async (req, res) => {
 
 		res.render('faculty_view_main', {
               //Values to pass into the .ejs.
+			  fac_key: req.params.fac_key,
               fac_info: facultyKeyValidate,
               student_info: studentInfoRows,
               time_info: registrationTimes

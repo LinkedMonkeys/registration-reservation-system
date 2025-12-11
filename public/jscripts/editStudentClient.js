@@ -12,7 +12,6 @@ async function postUpdatedField(e) {
 	try {
 		// clear Timer
 		console.log('focusout');
-		console.log(document.getElementsByName("Email")[1].value);
 		clearTimeout(timer);
 
 		// timer logic 2 seconds
