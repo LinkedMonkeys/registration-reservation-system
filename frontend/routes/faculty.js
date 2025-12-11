@@ -205,7 +205,7 @@ router.get('/:fac_key/restart', (req, res) => {
 router.get('/:fac_key', async (req, res) => {
 	try {
 		//query to validate faculty key
-		const facultyKeyValidate = await dbUtils.GetPersonByGroup(req.params.fac_key, Columns.PERSONS.GROUP);
+		const facultyKeyValidate = await dbUtils.GetPersonByGroup(req.params.fac_key, 'Professor');
 
 		// if facultyKeyValidate returns nothing or has no match
 		if (!facultyKeyValidate || facultyKeyValidate.length === 0) {
