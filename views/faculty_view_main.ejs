@@ -66,7 +66,7 @@
             <% if (time_info && time_info.length> 0) { %>
                 <form action="/faculty_main/delete-times" method="POST"
                     onsubmit="return confirm('Are you sure you want to delete the selected time slots?');">
-                    <input type="hidden" name="fac_key" value="<%= fac_info.Unique_Key %>">
+                    <input type="hidden" name="fac_key" value="<%= fac_key %>">
                     <table border="1">
                         <thead>
                             <tr>
