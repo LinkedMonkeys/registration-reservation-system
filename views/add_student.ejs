@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="/css/style.css">
+
 
 <head>
     <meta charset="UTF-8">
@@ -8,7 +10,9 @@
 </head>
 
 <body>
-    <h1>Adding new student advisee.</h1>
+    <header>
+        <h1>Adding new student advisee.</h1>
+    </header>
     <form action="/faculty_main/add-student" method="POST">
         <input type="hidden" name="fac_key" value="<%= fac_key %>">
         <table border="1">

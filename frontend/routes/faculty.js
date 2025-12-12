@@ -8,19 +8,6 @@ const generateUniqueKeysInASetFunction = require('../../Functions/GenerateUnique
 const dbUtils = require('../../database/dbFunctions/dbUtils.js');
 const {Tables, Columns} = require('../../database/dbFunctions/dbSructure.js');
 
-const dbPath = path.join(
-  __dirname,
-  '..',
-  '..',
-  'database',
-  'Production',
-  'registration-sample-DB-Production.db'
-);
-
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) console.error('Error opening database:', err.message);
-  else console.log('Connected to the SQLite database (faculty).');
-});
 
 // Edit student route
 router.get('/:fac_key/edit', async (req, res) => {
