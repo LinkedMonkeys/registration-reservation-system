@@ -55,17 +55,20 @@ function formatTime(time) {
   <input type="hidden" name="student_key" value="<%= student_key %>">
 
   <% time_info.forEach(slot => { %>
-    <% if (slot.Student_ID == 'Available_Key' && slot.Group == name_entries[0].Group) { %>
+    <% if (slot.Student_ID == 'Available_Key') { %>
       <% const label = formatDate(slot.Date_Available) + ' @ ' + formatTime(slot.Time); %>
+  
       <div class="meeting-option">
         <label>
           <input type="radio" name="selected_slot" 
-                 value="<%= slot.Professor_ID + '|' + slot.Date_Available + '|' + slot.Time + '|' + slot.Group %>">
+                value="<%= slot.Professor_ID + '|' + slot.Date_Available + '|' + slot.Time %>">
           <%= label %>
         </label>
       </div>
+  
     <% } %>
   <% }); %>
+  
 
   <br>
   <button id="submitBtn" type="submit">Submit Selected Time</button>
