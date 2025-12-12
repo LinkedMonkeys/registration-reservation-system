@@ -24,6 +24,8 @@ header {
     text-align: center;
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 1rem;;
 }
 
 header h1 {
@@ -79,4 +81,11 @@ th, td{
 button, input[type="button"]{
     cursor: pointer;
     /* need to make button click effect */
+}
+
+ul{
+    list-style-type: none;
+    display: flex;
+    gap: 1em;
+    justify-content: center;
 }

@@ -9,6 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Faculty Dashboard</title>
     <header>
+            <ul>
+                <li>
+                    <form action="/faculty_main/<%= fac_key %>">
+                    <input type="submit" value="Home">
+                    </form>
+                </li>
+                <li>
+                    <form action="/logout">
+                    <input type="submit" value="Logout">
+                    </form>
+                </li>
+            </ul>
 			<h1>Viewing student advisees for <%= fac_info[0].First_Name%> <%= fac_info[0].Last_Name%>.</h1>
     </header>
 </head>
