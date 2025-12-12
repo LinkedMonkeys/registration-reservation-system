@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/editStudentStyle.css">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
 </head>
+
 <body>
 	<header>
 		<h1>Edit Students.</h1>
@@ -17,45 +19,53 @@
 			<th size="10">Last Name</th>
 			<th size="10">Classification</th>
 			<th size="10">Email</th>
+			<th size="10">Actions</th>
 		</thead>
 		<tbody>
-				<% Student.forEach((student) => { %>
-			<tr>
-				<td>
-						<input form="form-<%= student.Unique_Key %>" class="editfield"
-							type="text" name="First_Name" value="<%= student.First_Name %>" size="10">
-
-						<input form="form-<%= student.Unique_Key %>" class="editfield"
-							type="text" name="Last_Name" value="<%= student.Last_Name %>" size="10">
-
+			<% Student.forEach((student)=> { %>
+				<tr>
+					<td>
+						<input form="form-<%= student.Unique_Key %>" class="editfield" type="text" name="First_Name"
+							value="<%= student.First_Name %>" size="10">
+					</td>
+					<td>
+						<input form="form-<%= student.Unique_Key %>" class="editfield" type="text" name="Last_Name"
+							value="<%= student.Last_Name %>" size="10">
+					</td>
+					<td>
 						<select form="form-<%= student.Unique_Key %>" class="editfield" id="group" name="Group">
-							<option value=""><%= student.Group %></option>
+							<option value="">
+								<%= student.Group %>
+							</option>
 							<option value="freshman">freshman</option>
 							<option value="sophomore">sophomore</option>
 							<option value="junior">junior</option>
 							<option value="senior">senior</option>
 						</select>
-						<input form="form-<%= student.Unique_Key %>" class="editfield"
-							type="text" name="Email" value="<%= student.Email %>" size="16">
-						<input form="form-<%= student.Unique_Key %>" 
-								type="hidden"
-								name="Unique_Key" 
-								value="<%= student.Unique_Key %>">
+					</td>
+					<td>
+						<input form="form-<%= student.Unique_Key %>" class="editfield" type="text" name="Email"
+							value="<%= student.Email %>" size="16">
+					</td>
+					<td>
+						<input form="form-<%= student.Unique_Key %>" type="hidden" name="Unique_Key"
+							value="<%= student.Unique_Key %>">
 
+						<button type="submit" form="form-<%= student.Unique_Key %>">Save</button>
 						<form method="POST" id="form-<%= student.Unique_Key %>" class="formRow"
 							action="/faculty_main/<%= Fac_key %>/edit/<%= student.Unique_Key %>"></form>
 
-							<form method="POST" action="/faculty_main/delete-student" style="display:inline;">
-								<input type="hidden" name="student_key" value="<%= student.Unique_Key %>">
-								<input type="hidden" name="fac_key" value="<%= Fac_key %>">
-								<button type="submit">Delete</button>
-							</form>							
+						<form method="POST" action="/faculty_main/delete-student" style="display:inline;">
+							<input type="hidden" name="student_key" value="<%= student.Unique_Key %>">
+							<input type="hidden" name="fac_key" value="<%= Fac_key %>">
+							<button type="submit">Delete</button>
+						</form>
 
-				</td>
-			</tr>
-			<% }) %>
+					</td>
+				</tr>
+				<% }) %>
 		</tbody>
-	</table>	
-		<script src="/jscripts/editStudentClient.js"></script>
+	</table>
+	<script src="/jscripts/editStudentClient.js"></script>
 </body>
 </html>
