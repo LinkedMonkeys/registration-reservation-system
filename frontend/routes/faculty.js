@@ -173,7 +173,7 @@ router.post('/delete-times', (req, res) => {
     DELETE FROM RegistrationList 
     WHERE Professor_ID="${fac_key}" AND (${deleteConditions})
   `;
-  db.run(deleteQuery);
+  dbUtils.db.run(deleteQuery);
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
