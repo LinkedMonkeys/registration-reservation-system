@@ -43,7 +43,7 @@ router.get('/:admin_key/manage_professors', (req, res) => {
   db.get(validateAdminQuery, (err, admin_info) => {
     if (err || !admin_info) return res.render('invalid_key', { key: adminKey });
     db.all(getProfessorsQuery, [], (err, professors) => {
-      res.render('admin_manage_professors', { admin_info, professors });
+      res.render('admin_manage_professors', { admin_info, professors, admin_key: adminKey });
     });
   });
 });
