@@ -39,6 +39,13 @@
 
 						<form method="POST" id="form-<%= student.Unique_Key %>" class="formRow"
 							action="/faculty_main/<%= Fac_key %>/edit/<%= student.Unique_Key %>"></form>
+
+							<form method="POST" action="/faculty_main/delete-student" style="display:inline;">
+								<input type="hidden" name="student_key" value="<%= student.Unique_Key %>">
+								<input type="hidden" name="fac_key" value="<%= Fac_key %>">
+								<button type="submit">Delete</button>
+							</form>							
+
 				</td>
 			</tr>
 			<% }) %>
