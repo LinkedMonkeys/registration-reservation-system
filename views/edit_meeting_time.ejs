@@ -8,9 +8,9 @@
     <title>Editing Meeting Time</title>
 </head>
 <body>
-    <% if (Meeting.length >= 0) { %>  
+    <% if (Meeting && Meeting.length > 0) { %>  
         <h1>Editing Meeting Time on <%= Meeting[0].Date_Available %> at <%= Meeting[0].Time %></h1>
-       <form action="/update-meeting" method="POST">
+       <form action="/faculty_main/update-meeting" method="POST">
           <input type="hidden" name="fac_key" value="<%= Meeting[0].Professor_ID %>">
           <input type="hidden" name="old_date" value="<%= Meeting[0].Date_Available %>">
           <input type="hidden" name="old_time" value="<%= Meeting[0].Time %>">

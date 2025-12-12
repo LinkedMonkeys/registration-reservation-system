@@ -126,7 +126,7 @@ router.post('/update-meeting', (req, res) => {
     AND Date_Available="${old_date}"
     AND Time="${old_time}"
   `;
-  db.run(updateQuery);
+  dbUtils.db.run(updateQuery);
   res.redirect(`/faculty_main/${fac_key}`);
 });
 
