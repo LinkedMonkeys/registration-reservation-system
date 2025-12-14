@@ -83,10 +83,10 @@ function GetTimesByProfesor(profID) {
 };
 
 function UpdateStudent(studentID, field, value) {
-	const rows = `UPDATE ${Tables.PERSONS} SET ${field} = ? WHERE ${Columns.PERSONS.UNIQUE_KEY} = ?`
+	const rows = `UPDATE ${Tables.PERSONS} SET "${field}" = ? WHERE ${Columns.PERSONS.UNIQUE_KEY} = ?`
 
 	return new Promise((resolve, reject) => {
-		db.all(rows, [value, studentID], (err, rows) => {
+		db.run(rows, [value, studentID], (err, rows) => {
 			if (err) reject(`Error with DB query: ${err}`)
 			else resolve(rows);
 		});

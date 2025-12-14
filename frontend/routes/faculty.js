@@ -52,7 +52,7 @@ router.post('/:fac_key/edit/:student_key', async (req, res) => {
 
 		for (const key in updatedFields) {
 			//update db function: id key, field name, field value
-			await dbUtils.dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
+			await dbUtils.UpdateStudent(req.params.student_key, key, updatedFields[key]);
 		}
 		res.redirect(`/faculty_main/${req.params.fac_key}/edit`);
 		
