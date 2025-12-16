@@ -8,7 +8,17 @@
   <title>Manage Professors</title>
 </head>
 <body>
-  <h1>Manage Professors</h1>
+  <header>
+    <ul>
+        <li>
+            <form action="/admin/<%= admin_info.Unique_Key %>">
+            <input type="submit" value="Home">
+            </form>
+        </li>
+    </ul>
+    <h1>Manage Professors</h1>
+    </header>
+  
 
   <% if (professors && professors.length > 0) { %>
   <table border="1">

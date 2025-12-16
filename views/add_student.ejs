@@ -11,8 +11,15 @@
 
 <body>
     <header>
-        <h1>Adding new student advisee.</h1>
-    </header>
+		<ul>
+			<li>
+				<form action="/faculty_main/<%= fac_key %>">
+				<input type="submit" value="Home">
+				</form>
+			</li>
+		</ul>
+		<h1>Adding new student advisee.</h1>
+	</header>
     <form action="/faculty_main/add-student" method="POST">
         <input type="hidden" name="fac_key" value="<%= fac_key %>">
         <table border="1">

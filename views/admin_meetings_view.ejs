@@ -8,7 +8,17 @@
   <title>All Meetings Overview</title>
 </head>
 <body>
-  <h1>All Scheduled Meetings</h1>
+  <header>
+    <ul>
+        <li>
+            <form action="/admin/<%= admin_info.Unique_Key %>">
+            <input type="submit" value="Home">
+            </form>
+        </li>
+    </ul>
+    <h1>All Scheduled Meetings</h1>
+    </header>
+
 
   <% if (meetings && meetings.length > 0) { %>
   <table border="1">

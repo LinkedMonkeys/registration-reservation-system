@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/send_email.css">
 <head>
   <meta charset="UTF-8">
   <title>Email Student</title>
 </head>
+
 <body>
-
-<h1>Send Registration Link to <%= student.First_Name %> <%= student.Last_Name %></h1>
-
-<form action="/faculty_main/send_email" method="POST">
+  <header>
+    <ul>
+        <li>
+            <form action="/faculty_main/<%= student.Advisor %>">
+            <input type="submit" value="Home">
+            </form>
+        </li>
+    </ul>
+    <h1>Send Registration Link to <%= student.First_Name %> <%= student.Last_Name %></h1>
+</header>
+<br>
+<form action="/faculty_main/send_email" method="POST" id="emailForm">
   <input type="hidden" name="student_key" value="<%= student.Unique_Key %>">
   <input type="hidden" name="fac_key" value="<%= student.Advisor %>">
 

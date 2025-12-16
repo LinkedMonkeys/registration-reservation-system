@@ -112,7 +112,7 @@ router.get('/edit_meeting_time/:fac_key/:date/:time', (req, res) => {
   dbUtils.db.all(meetingQuery, [], (err, meeting) => {
     if (err) return res.status(500).send('Error retrieving meeting');
     if (meeting.length === 0) return res.status(404).send('Meeting time not found');
-    res.render('edit_meeting_time', { Meeting: meeting });
+    res.render('edit_meeting_time', { Meeting: meeting, Fac_key: req.params.fac_key });
   });
 });
 
