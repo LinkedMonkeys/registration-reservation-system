@@ -19,7 +19,7 @@ async function postUpdatedField(e) {
 			
 			//console.log('test submist');
 			e.target.form.submit();
-		}, 5000);
+		}, 100);
 	} catch (err) {
 		console.log(err)
 	}
